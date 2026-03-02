@@ -8,3 +8,7 @@ change log 1- Ryder feb 18th
 change log 1- Ryder mar 1st
 1. added a train car system
 2. added a system that will draw cards for the starting hand 
+change log 1- Ryder mar 2nd
+1. made a more accurate deck system that uses a deck object to store and draw cards from.
+2. modifyed all existing code to use the new system
+3. added the ability to draw cards from five options during a turn with accurate restrictions.
