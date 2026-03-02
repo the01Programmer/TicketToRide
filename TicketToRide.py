@@ -1,5 +1,5 @@
 import pygame
-
+import random
 # pygame setup
 pygame.init()
 screen = pygame.display.set_mode((1280, 720))
@@ -11,23 +11,33 @@ class player:
         self.score = 0
         self.hand = [0,0,0,0,0,0,0,0]
         self.wild = 0
+        self.cars = 45#should be lowered for testing
+        deal = 4
+        while deal > 0:
+            gven = random.randrange(1,4,1)
+            if gven <= deal:
+                self.hand[random.randrange(0,7,1)] = gven
+                deal-=gven
         pass
     def spend(self, color, amount):
-        if amount <= self.hand[color]:
-            self.hand[color] -= amount
-            return True
-        elif amount <= self.hand[color] + self.wild:
-            spendw = amount - self.hand[color]
-            print(f"do you want to spend {spendw} wild cards to buy this rail?\n")
-            awns = input("[y/n]: ")
-            while True:
-                if awns == "Y":
-                    self.hand[color] = 0
-                    self.wild -= spendw
-                    return True
-                elif awns == "N":
-                    return False
-            
+        if self.cars > amount:
+            if amount <= self.hand[color]:
+                self.hand[color] -= amount
+                self.cars -=amount
+                return True
+            elif amount <= self.hand[color] + self.wild:
+                spendw = amount - self.hand[color]
+                print(f"do you want to spend {spendw} wild cards to buy this rail?\n")
+                awns = input("[y/n]: ")
+                while True:
+                    if awns == "Y":
+                        self.hand[color] = 0
+                        self.wild -= spendw
+                        self.cars -=amount
+                        return True
+                    elif awns == "N":
+                        return False
+        
         return False
     def draw(self):
         print(f"current hand state: red: {self.hand[0]}, green: {self.hand[1]}, blue: {self.hand[2]}, white: {self.hand[3]}, black: {self.hand[4]}, orange: {self.hand[5]}, pink: {self.hand[6]}, yellow: {self.hand[7]}, wild: {self.wild}")
