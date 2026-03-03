@@ -42,6 +42,120 @@ def numbertocolor(num):
         return "yellow"
     if num == 8:
         return "wild"
+    
+def colortonumber(color):
+    if color == "red":
+        return 0
+    if color == "green":
+        return 1
+    if color == "blue":
+        return 2
+    if color == "white":
+        return 3
+    if color == "black":
+        return 4
+    if color == "orange":
+        return 5
+    if color == "pink":
+        return 6
+    if color == "yellow":
+        return 7
+    if color == "wild":
+        return 8
+
+def scoreforlength(n):
+    if n == 1:
+        return 1
+    if n == 2:
+        return 2
+    if n == 3:
+        return 4
+    if n == 4:
+        return 7
+    if n == 5:
+        return 10
+    if n == 6:
+        return 15
+
+
+def pointtosegmentdistance(px, py, ax, ay, bx, by):
+    # distance from point px,py to a line
+
+    abx = bx - ax
+    aby = by - ay
+    apx = px - ax
+    apy = py - ay
+
+    # length of AB squared
+    ablensq = abx * abx + aby * aby
+
+    # if A and B are the same point, measure to A
+    if ablensq == 0:
+        dx = px - ax
+        dy = py - ay
+        return math.hypot(dx, dy)
+
+    # compute projection factor (clamped to [0, 1])
+    t = (apx * abx + apy * aby) / ablensq
+    if t < 0:
+        t = 0
+    if t > 1:
+        t = 1
+
+    # closest point on AB
+    cx = ax + t * abx
+    cy = ay + t * aby
+
+    dx = px - cx
+    dy = py - cy
+
+    return math.hypot(dx, dy)
+
+
+def findtrackundermouse(mousepos, map, hitradius=18):
+    # mouse_pos is (mx, my)
+    mx = mousepos[0]
+    my = mousepos[1]
+
+    # check all tracks in the map
+    for t in map.trackList:
+        ax = t.city1.position[0]
+        ay = t.city1.position[1]
+        bx = t.city2.position[0]
+        by = t.city2.position[1]
+
+        # how close is the mouse to this track?
+        d = pointtosegmentdistance(mx, my, ax, ay, bx, by)
+
+        if d <= hitradius:
+            return t  # this is the track we clicked
+
+    return None  # no track under mouse
+
+
+def buytrack(player, track, deck):
+    # 1. Make sure track is not already claimed
+    if track.Owner is not None:
+        print("Track already claimed.")
+        return False
+
+    # 2. Try to spend cards equal to the track length
+    # track.color must be a number 0–8 
+    numofcolor = colortonumber(track.color)
+    
+    success = player.spend(numofcolor, track.length, deck)
+    if not success:
+        print("Not enough cards to buy this track.")
+        return False
+
+    # 3. Give ownership of the track to that player
+    track.Owner = player
+
+    # 4. Score points based on the track length
+    player.score += scoreforlength(track.length)
+
+    print("Track bought!")
+    return True
 
 class deck:
     def __init__(self):
@@ -267,6 +381,20 @@ while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
+        
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            if event.button == 1:   # left mouse click
+                mousepos = pygame.mouse.get_pos()
+
+                track = findtrackundermouse(mousepos, map)
+
+                if track is not None:
+                    success = buytrack(user, track, cards)
+
+                    if success:
+                        print("Track bought!")
+                    else:
+                        print("Could not buy this track.")
 
     # fill the screen with a color to wipe away anything from last frame
     screen.fill("grey")
