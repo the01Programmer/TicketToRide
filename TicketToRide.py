@@ -95,7 +95,7 @@ def pointtosegmentdistance(px, py, ax, ay, bx, by):
         dy = py - ay
         return math.hypot(dx, dy)
 
-    # compute projection factor (clamped to [0, 1])
+    # compute projection factor (with limited range)
     t = (apx * abx + apy * aby) / ablensq
     if t < 0:
         t = 0
@@ -417,4 +417,5 @@ while running:
     clock.tick(60)  # limits FPS to 60
 
 pygame.quit()
+
 
