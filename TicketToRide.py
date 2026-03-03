@@ -9,6 +9,8 @@ pygame.init()
 screen = pygame.display.set_mode((1280, 720))
 clock = pygame.time.Clock()
 running = True
+font = pygame.font.SysFont('Corbel',35)
+
 
 TRACK_COLORS = {
     "red": (255, 0, 0),
@@ -16,7 +18,30 @@ TRACK_COLORS = {
     "green": (0, 255, 0),
     "white": (255, 255, 255),
     "black": (20, 20, 20),
+    "pink": (232, 158, 184),
+    "yellow": (255, 255, 0),
+    "orange": (255, 153, 28),
+    "wild": (128, 128, 128),
 }
+def numbertocolor(num):
+    if num == 0:
+        return "red"
+    if num == 1:
+        return "green"
+    if num == 2:
+        return "blue"
+    if num == 3:
+        return "white"
+    if num == 4:
+        return "black"
+    if num == 5:
+        return "orange"
+    if num == 6:
+        return "pink"
+    if num == 7:
+        return "yellow"
+    if num == 8:
+        return "wild"
 
 class deck:
     def __init__(self):
@@ -60,37 +85,21 @@ class deck:
         self.piles[num] = self.get()
         return ret
     def draw(self, play):
-        c = ["null","null","null","null","null"]
-        f = 0
-        for i in self.piles:
-            if i == 0:
-                c[f] = "red"
-            if i == 1:
-                c[f] = "Green"
-            if i == 2:
-                c[f] = "Blue"
-            if i == 3:
-                c[f] = "white"
-            if i == 4:
-                c[f] = "black"
-            if i == 5:
-                c[f] = "orange"
-            if i == 6:
-                c[f] = "pink"
-            if i == 7:
-                c[f] = "yellow"
-            if i == 8:
-                c[f] = "wild"
-            f+=1
-        print(f"1: {c[0]} ,2: {c[1]} , 3: {c[2]} , 4: {c[3]} , 5: {c[4]}")
-        get = int(input("draw whitch: ")) - 1
-        draw = self.drawfrompile(get)
-        play.hand[draw] += 1
-        got = get
-        while draw != 8 & get != got:
-            get = int(input("draw whitch: ")) - 1
-            if get != got:
-                play.hand[self.drawfrompile(get)] += 1
+        c=1
+        #c = ["null","null","null","null","null"]
+        #f = 0
+        #for i in self.piles:
+        #    c[f] = numbertocolor(c[f])
+        #    f+=1
+        #print(f"1: {c[0]} ,2: {c[1]} , 3: {c[2]} , 4: {c[3]} , 5: {c[4]}")
+        #get = int(input("draw whitch: ")) - 1
+        #draw = self.drawfrompile(get)
+        #play.hand[draw] += 1
+        #got = get
+        #while draw != 8 & get != got:
+        #    get = int(input("draw whitch: ")) - 1
+        #    if get != got:
+        #        play.hand[self.drawfrompile(get)] += 1*
 
 class player:
 
@@ -146,7 +155,15 @@ class player:
     def draw(self):
         if self.cars <=2:
             self.ending = True
-        print(f"current hand state: red: {self.hand[0]}, green: {self.hand[1]}, blue: {self.hand[2]}, white: {self.hand[3]}, black: {self.hand[4]}, orange: {self.hand[5]}, pink: {self.hand[6]}, yellow: {self.hand[7]}, wild: {self.hand[8]}")
+        #print(f"current hand state: red: {self.hand[0]}, green: {self.hand[1]}, blue: {self.hand[2]}, white: {self.hand[3]}, black: {self.hand[4]}, orange: {self.hand[5]}, pink: {self.hand[6]}, yellow: {self.hand[7]}, wild: {self.hand[8]}")
+        for i in range(0,8):
+            pygame.draw.rect(screen,TRACK_COLORS.get(numbertocolor(i)),[30+(60*i),15,30,40], border_radius=3)
+            if i == 4:
+                text = font.render(f'{self.hand[i]}' , True , (255,255,255))
+            else:
+                text = font.render(f'{self.hand[i]}' , True , (0,0,0))
+            screen.blit(text,(30+(60*i),15))
+        
         pass
 
 
@@ -263,7 +280,7 @@ while running:
         pygame.quit()
         sys.exit()
     #commented these out for now so it doesn't freeze and I can see the drawn map
-    #user.draw() 
+    user.draw() 
     #cards.draw(user)
     #input("continue?: ")
     # flip() the display to put your work on screen
@@ -272,3 +289,4 @@ while running:
     clock.tick(60)  # limits FPS to 60
 
 pygame.quit()
+
