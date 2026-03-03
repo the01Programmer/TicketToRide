@@ -36,3 +36,8 @@ Now the game can tell when the player clicks on something
 
 change log 6- Ryder mar 2nd
 1. updated the deck class to allow the user to draw cards from the map insted of the console
+
+2. change log 7- Ryder mar 2nd
+1. fixed issue where pile and hand ui didnt show the last card in the array
+2. made the spend cards function when asking to use wild cards more user friendy by adding recognision for lowercase responses. 
+
