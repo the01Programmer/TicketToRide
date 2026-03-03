@@ -166,7 +166,7 @@ class deck:
         self.todraw = [9,9]
         self.drawfirst = False
         self.buttons = []
-        for i in range(0,4):
+        for i in range(0,5):
             self.buttons.append(pygame.Rect(30+(120*i),350,100,40))
         total = 110
         while total >0:
@@ -188,7 +188,7 @@ class deck:
         return ret
     
     def findpusedpiles(self):
-        for i in range(0,4):
+        for i in range(0,5):
             if self.buttons[i].collidepoint(pygame.mouse.get_pos()):
                 
                 self.todraw[self.drawfirst] = i
@@ -229,7 +229,7 @@ class deck:
             self.drawfirst = False
         
     def draw(self):
-        for i in range(0,4):
+        for i in range(0,5):
             pygame.draw.rect(screen,TRACK_COLORS.get(numbertocolor(self.piles[i])),[30+(120*i),350,100,40], border_radius=3)
             if i == self.todraw[0] or i == self.todraw[1]:
                 pygame.draw.rect(screen,(0,0,0),[30+(120*i),350,100,40], 2,border_radius=3)
@@ -295,7 +295,7 @@ class player:
         if self.cars <=2:
             self.ending = True
         #print(f"current hand state: red: {self.hand[0]}, green: {self.hand[1]}, blue: {self.hand[2]}, white: {self.hand[3]}, black: {self.hand[4]}, orange: {self.hand[5]}, pink: {self.hand[6]}, yellow: {self.hand[7]}, wild: {self.hand[8]}")
-        for i in range(0,8):
+        for i in range(0,9):
             pygame.draw.rect(screen,TRACK_COLORS.get(numbertocolor(i)),[30+(60*i),15,30,40], border_radius=3)
             if i == 4:
                 text = font.render(f'{self.hand[i]}' , True , (255,255,255))
