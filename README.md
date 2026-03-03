@@ -34,3 +34,5 @@ Now the game can tell when the player clicks on something
 
 3. In general I made the map interactive so a player can actually click on a track and the game will detect whether the player can buy it or not
 
+change log 6- Ryder mar 2nd
+1. updated the deck class to allow the user to draw cards from the map insted of the console
