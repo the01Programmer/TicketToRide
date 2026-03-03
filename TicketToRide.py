@@ -95,7 +95,7 @@ def pointtosegmentdistance(px, py, ax, ay, bx, by):
         dy = py - ay
         return math.hypot(dx, dy)
 
-    # compute projection factor (with limited range)
+     # compute projection factor (with limited range)
     t = (apx * abx + apy * aby) / ablensq
     if t < 0:
         t = 0
@@ -110,6 +110,7 @@ def pointtosegmentdistance(px, py, ax, ay, bx, by):
     dy = py - cy
 
     return math.hypot(dx, dy)
+
 
 
 def findtrackundermouse(mousepos, map, hitradius=18):
@@ -162,6 +163,11 @@ class deck:
         self.piles = [0,0,0,0,0]
         self.cards = queue.Queue()
         self.graveyard = [12,12,12,12,12,12,12,12,14]
+        self.todraw = [9,9]
+        self.drawfirst = False
+        self.buttons = []
+        for i in range(0,4):
+            self.buttons.append(pygame.Rect(30+(120*i),350,100,40))
         total = 110
         while total >0:
             draw = random.randrange(0,9,1)
@@ -181,6 +187,21 @@ class deck:
             self.shuffle()
         return ret
     
+    def findpusedpiles(self):
+        for i in range(0,4):
+            if self.buttons[i].collidepoint(pygame.mouse.get_pos()):
+                
+                self.todraw[self.drawfirst] = i
+                if self.piles[i] != 8:
+                    self.drawfirst = not self.drawfirst
+                else:
+                    self.todraw[0] = i
+                    self.todraw[1] = 9
+                    self.drawfirst = False
+
+                
+                 
+    
     def discard(self,color, amount):
         self.graveyard[color]+=amount
         pass
@@ -194,26 +215,29 @@ class deck:
                 self.graveyard[draw]-=1
                 self.cards.put(draw)
                 total-=1
-    def drawfrompile(self,num):
-        ret = self.piles[num]
-        self.piles[num] = self.get()
-        return ret
-    def draw(self, play):
-        c=1
-        #c = ["null","null","null","null","null"]
-        #f = 0
-        #for i in self.piles:
-        #    c[f] = numbertocolor(c[f])
-        #    f+=1
-        #print(f"1: {c[0]} ,2: {c[1]} , 3: {c[2]} , 4: {c[3]} , 5: {c[4]}")
-        #get = int(input("draw whitch: ")) - 1
-        #draw = self.drawfrompile(get)
-        #play.hand[draw] += 1
-        #got = get
-        #while draw != 8 & get != got:
-        #    get = int(input("draw whitch: ")) - 1
-        #    if get != got:
-        #        play.hand[self.drawfrompile(get)] += 1*
+    def drawfrompile(self,user):
+        if self.todraw[0] != 9:
+            user.addtohand(self.piles[self.todraw[0]])
+            if self.todraw[1] != 9:
+                user.addtohand(self.piles[self.todraw[1]])
+            if self.todraw[0] != 9:
+                self.piles[self.todraw[0]] = self.get()
+            if self.todraw[1] != 9:
+                self.piles[self.todraw[1]] = self.get()
+            self.todraw[1] = 9
+            self.todraw[0] = 9
+            self.drawfirst = False
+        
+    def draw(self):
+        for i in range(0,4):
+            pygame.draw.rect(screen,TRACK_COLORS.get(numbertocolor(self.piles[i])),[30+(120*i),350,100,40], border_radius=3)
+            if i == self.todraw[0] or i == self.todraw[1]:
+                pygame.draw.rect(screen,(0,0,0),[30+(120*i),350,100,40], 2,border_radius=3)
+            if self.piles[i] == 4:
+                text = font.render(f'{i+1}' , True , (255,255,255))
+            else:
+                text = font.render(f'{i+1}' , True , (0,0,0))
+            screen.blit(text,(50+(120*i),350))
 
 class player:
 
@@ -265,7 +289,8 @@ class player:
                         return False
         
         return False
-    
+    def addtohand(self,color):
+        self.hand[color] +=1
     def draw(self):
         if self.cars <=2:
             self.ending = True
@@ -395,6 +420,12 @@ while running:
                         print("Track bought!")
                     else:
                         print("Could not buy this track.")
+                else:
+                    cards.findpusedpiles()
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_SPACE:
+                cards.drawfrompile(user)
+
 
     # fill the screen with a color to wipe away anything from last frame
     screen.fill("grey")
@@ -409,7 +440,7 @@ while running:
         sys.exit()
     #commented these out for now so it doesn't freeze and I can see the drawn map
     user.draw() 
-    #cards.draw(user)
+    cards.draw()
     #input("continue?: ")
     # flip() the display to put your work on screen
     pygame.display.flip()
@@ -417,5 +448,4 @@ while running:
     clock.tick(60)  # limits FPS to 60
 
 pygame.quit()
-
 
