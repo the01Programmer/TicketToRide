@@ -1,3 +1,4 @@
+
 import pygame
 import random
 import queue
@@ -278,15 +279,16 @@ class player:
                 print(f"do you want to spend {spendw} wild cards to buy this rail?\n")
                 awns = input("[y/n]: ")
                 while True:
-                    if awns == "Y":
+                    if awns == 'Y' or awns == 'y':
                         self.hand[color] = 0
                         self.hand[8] -= spendw
                         self.cars -=amount
                         dis.discard(color,amount - spendw)
                         dis.discard(8,spendw)
                         return True
-                    elif awns == "N":
+                    elif awns == 'N' or awns == 'n':
                         return False
+                    awns = input("[y/n]: ")
         
         return False
     def addtohand(self,color):
