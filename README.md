@@ -37,7 +37,7 @@ Now the game can tell when the player clicks on something
 change log 6- Ryder mar 2nd
 1. updated the deck class to allow the user to draw cards from the map insted of the console
 
-2. change log 7- Ryder mar 2nd
+change log 7- Ryder mar 2nd
 1. fixed issue where pile and hand ui didnt show the last card in the array
 2. made the spend cards function when asking to use wild cards more user friendy by adding recognision for lowercase responses. 
 
@@ -45,3 +45,6 @@ change log 8 Emmanuel mar 3
 1. Added routeCard class
 2. added route checking functions to the player class
 
+change log 9- Ryder mar 3nd
+1. made routeCards a member variable of deck to ensure all card elements are handeled by it
+2. added a system that allows the user to draw new route cards by pressing a button in the menu then with following inputs handeled in the comand line
