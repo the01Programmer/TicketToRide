@@ -48,3 +48,7 @@ change log 8 Emmanuel mar 3
 change log 9- Ryder mar 3nd
 1. made routeCards a member variable of deck to ensure all card elements are handeled by it
 2. added a system that allows the user to draw new route cards by pressing a button in the menu then with following inputs handeled in the comand line
+
+change log 10 Emmanuel mar 3
+1. added point loss on incomplete routes
+2. made tweaks on route card handling for better system

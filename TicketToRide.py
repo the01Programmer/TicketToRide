@@ -219,6 +219,7 @@ class deck:
             user.routeCardList.append(given[int(awns2)-1])
             self.routeCards.remove(given[int(awns)-1])
             self.routeCards.remove(given[int(awns2)-1])
+        user.checkRouteCompletion()
             
     def findpusedbuttons(self,user):
         if self.routedrawbutton.collidepoint(pygame.mouse.get_pos()):
@@ -365,12 +366,14 @@ class player:
         self.adjacencyList[city_b].append(city_a)
     def checkRouteCompletion(self):
         for r in self.routeCardList:
-            start = r.city1
-            end = r.city2
-            if self.checkConnection(start, end):
-                print("Route from "+r.city1.name+" to "+r.city2.name+" Completed")
-                self.score += r.points
-                self.routeCardList.remove(r)
+            if not r.completed:
+                start = r.city1
+                end = r.city2
+                if self.checkConnection(start, end):
+                    print("Route from "+r.city1.name+" to "+r.city2.name+" Completed")
+                    self.score += r.points
+                    r.completed = True
+                    print("Your Score: " + str(user.score))
     def checkConnection(self, start, end):
         # If the player hasn't even visited these cities, they aren't connected
         if start not in self.adjacencyList or end not in self.adjacencyList:
@@ -502,8 +505,12 @@ class RouteCard:
         self.city1 = city1
         self.city2 = city2
         self.points = points
+        self.completed = False
     def drawRouteCard(self, surface,x,y):
-        text_surf = font.render(self.city1.name + " to " + self.city2.name + " Points: " + str(self.points), True, (0, 0, 0))
+        if self.completed:
+            text_surf = font.render(self.city1.name + " to " + self.city2.name + " Points: " + str(self.points) + " Completed", True, (0, 0, 0))
+        else:
+            text_surf = font.render(self.city1.name + " to " + self.city2.name + " Points: " + str(self.points), True, (0, 0, 0))
         text_rect = text_surf.get_rect(center=(x, y))
         surface.blit(text_surf, text_rect)
 
@@ -536,6 +543,7 @@ while running:
 
                     if success:
                         print("Track bought!")
+                        print("Your Score: " + str(user.score))
                         user.checkRouteCompletion()
                     else:
                         print("Could not buy this track.")
@@ -553,6 +561,9 @@ while running:
     map.drawMap(screen)
 
     if user.ending:
+        for r in user.routeCardList:
+            if not r.completed:
+                user.score -= r.points
         print(f"game over you got: {user.score} points")
         input("end game?: ")
         #add the score loss for incomplete routes
