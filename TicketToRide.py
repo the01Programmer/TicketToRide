@@ -1,4 +1,5 @@
 
+
 import pygame
 import random
 import queue
@@ -168,9 +169,10 @@ class deck:
         self.graveyard = [12,12,12,12,12,12,12,12,14]
         self.todraw = [9,9]
         self.drawfirst = False
-        self.buttons = []
+        self.routedrawbutton = pygame.Rect(1000,100,230,40)
+        self.carddrawbuttons = []
         for i in range(0,5):
-            self.buttons.append(pygame.Rect(30+(120*i),350,100,40))
+            self.carddrawbuttons.append(pygame.Rect(30+(120*i),350,100,40))
         total = 110
         while total >0:
             draw = random.randrange(0,9,1)
@@ -183,16 +185,53 @@ class deck:
         self.piles[2] = self.get()
         self.piles[3] = self.get()
         self.piles[4] = self.get()
+        self.routeCards = []
 
     def get(self):
         ret = self.cards.get()
         if self.cards.empty():
             self.shuffle()
         return ret
-    
-    def findpusedpiles(self):
+    def drawroutes(self,user, given):
+        print("chose at least one of these three cards: " + given[0].city1.name + " to " + given[0].city2.name + " Points: " + str(given[0].points) + ", "+ given[1].city1.name + " to " + given[1].city2.name + " Points: " + str(given[1].points) + ", " + given[2].city1.name + " to " + given[2].city2.name + " Points: " + str(given[2].points))
+        awns = "-1"
+        awns2 = "-1"
+        awns3 = "-1"
+        while awns != '1' and awns != '2' and awns != '3':
+            awns = input("chose from [1,2,3]: ")
+        
+        while (awns2 != '1' and awns2 != '2' and awns2 != '3') or awns2 == awns:
+            awns2 = input("take another?[1,2,3] [n] to not: ")
+            if awns2 == 'n' or awns2 == 'N':
+                user.routeCardList.append(given[int(awns)-1])
+                self.routeCards.remove(given[int(awns)-1])
+                return
+        awns3 = input("take the last card?[y/n]: ")
+        if awns3 == 'Y' or awns3 == 'y':
+            user.routeCardList.append(given[0])
+            user.routeCardList.append(given[1])
+            user.routeCardList.append(given[2])
+            self.routeCards.remove(given[0])
+            self.routeCards.remove(given[1])
+            self.routeCards.remove(given[2])
+        else:
+            user.routeCardList.append(given[int(awns)-1])
+            user.routeCardList.append(given[int(awns2)-1])
+            self.routeCards.remove(given[int(awns)-1])
+            self.routeCards.remove(given[int(awns2)-1])
+            
+    def findpusedbuttons(self,user):
+        if self.routedrawbutton.collidepoint(pygame.mouse.get_pos()):
+            exclude = []
+            one = random.randrange(0,len(self.routeCards),1)
+            exclude.append(one)
+            two =  random.choice([i for i in range(len(self.routeCards)) if i not in exclude])
+            exclude.append(two)
+            three = random.choice([i for i in range(len(self.routeCards)) if i not in exclude])
+            self.drawroutes(user,[self.routeCards[one],self.routeCards[two],self.routeCards[three]])
+            return
         for i in range(0,5):
-            if self.buttons[i].collidepoint(pygame.mouse.get_pos()):
+            if self.carddrawbuttons[i].collidepoint(pygame.mouse.get_pos()):
                 
                 self.todraw[self.drawfirst] = i
                 if self.piles[i] != 8:
@@ -201,10 +240,7 @@ class deck:
                     self.todraw[0] = i
                     self.todraw[1] = 9
                     self.drawfirst = False
-
-                
-                 
-    
+                    
     def discard(self,color, amount):
         self.graveyard[color]+=amount
         pass
@@ -232,6 +268,9 @@ class deck:
             self.drawfirst = False
         
     def draw(self):
+        pygame.draw.rect(screen,TRACK_COLORS.get("red"),self.routedrawbutton, border_radius=3)
+        text = font.render('draw new route' , True , (0,0,0))
+        screen.blit(text,(1000,100))
         for i in range(0,5):
             pygame.draw.rect(screen,TRACK_COLORS.get(numbertocolor(self.piles[i])),[30+(120*i),350,100,40], border_radius=3)
             if i == self.todraw[0] or i == self.todraw[1]:
@@ -241,6 +280,7 @@ class deck:
             else:
                 text = font.render(f'{i+1}' , True , (0,0,0))
             screen.blit(text,(50+(120*i),350))
+        
 
 class player:
 
@@ -262,7 +302,7 @@ class player:
         self.hand = [0,0,0,0,0,0,0,0,0]
         self.routes = []
         self.ending =  False
-        self.cars = 45#should be lowered for testing
+        self.cars = 17#real max should be 45
         deal = 4
         self.hand[pull.get()] += 1
         self.hand[pull.get()] += 1
@@ -309,6 +349,10 @@ class player:
             else:
                 text = font.render(f'{self.hand[i]}' , True , (0,0,0))
             screen.blit(text,(30+(60*i),15))
+            i = 0 
+        for r in self.routeCardList:
+            r.drawRouteCard(screen,1000,200+(100*i))
+            i+=1
         
         pass
     def addConnection(self, city_a, city_b):
@@ -395,6 +439,9 @@ class Map:
         cityList.append(d)
 
         self.routeList.append(self.createRouteCard(b, d, 10))
+        self.routeList.append(self.createRouteCard(c, d, 25))
+        self.routeList.append(self.createRouteCard(a, d, 20))
+        self.routeList.append(self.createRouteCard(a, c, 15))
         
         t1 = Track("red", 4, 0, a, b)
         t2 = Track("blue", 6, 0, a, c)
@@ -455,18 +502,19 @@ class RouteCard:
         self.city1 = city1
         self.city2 = city2
         self.points = points
-    def drawRouteCard(self, surface):
+    def drawRouteCard(self, surface,x,y):
         text_surf = font.render(self.city1.name + " to " + self.city2.name + " Points: " + str(self.points), True, (0, 0, 0))
-        text_rect = text_surf.get_rect(center=(1000, 200))
+        text_rect = text_surf.get_rect(center=(x, y))
         surface.blit(text_surf, text_rect)
 
-routeCards = []
+
 cards = deck()
 user = player(cards)
-map = Map(routeCards)
+map = Map(cards.routeCards)
 
 #test codes
-user.routeCardList.append(routeCards[0])
+user.routeCardList.append(cards.routeCards[0])
+del cards.routeCards[0]
 for i in range(9):
     user.hand[i] = 20
 
@@ -492,7 +540,7 @@ while running:
                     else:
                         print("Could not buy this track.")
                 else:
-                    cards.findpusedpiles()
+                    cards.findpusedbuttons(user)
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_SPACE:
                 cards.drawfrompile(user)
@@ -507,14 +555,13 @@ while running:
     if user.ending:
         print(f"game over you got: {user.score} points")
         input("end game?: ")
+        #add the score loss for incomplete routes
         pygame.quit()
         sys.exit()
 
     user.draw() 
     cards.draw()
-
-    for r in routeCards:
-        r.drawRouteCard(screen)
+    
     #input("continue?: ")
     # flip() the display to put your work on screen
     pygame.display.flip()
