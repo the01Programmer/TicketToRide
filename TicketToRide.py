@@ -5,13 +5,13 @@ import queue
 import time
 import sys
 import math
+from collections import deque
 # pygame setup
 pygame.init()
 screen = pygame.display.set_mode((1280, 720))
 clock = pygame.time.Clock()
 running = True
 font = pygame.font.SysFont('Corbel',35)
-
 
 TRACK_COLORS = {
     "red": (255, 0, 0),
@@ -152,11 +152,13 @@ def buytrack(player, track, deck):
 
     # 3. Give ownership of the track to that player
     track.Owner = player
+    player.ownedTrackList.append(track)
+    player.addConnection(track.city1, track.city2)
 
     # 4. Score points based on the track length
     player.score += scoreforlength(track.length)
 
-    print("Track bought!")
+    #print("Track bought!")
     return True
 
 class deck:
@@ -266,6 +268,9 @@ class player:
         self.hand[pull.get()] += 1
         self.hand[pull.get()] += 1
         self.hand[pull.get()] += 1
+        self.adjacencyList = {}
+        self.routeCardList = []
+        self.ownedTrackList = []
         pass
     def spend(self, color, amount, dis):
         if self.cars > amount:
@@ -306,7 +311,45 @@ class player:
             screen.blit(text,(30+(60*i),15))
         
         pass
-
+    def addConnection(self, city_a, city_b):
+        if city_a not in self.adjacencyList:
+            self.adjacencyList[city_a] = []
+        if city_b not in self.adjacencyList:
+            self.adjacencyList[city_b] = []
+        
+        self.adjacencyList[city_a].append(city_b)
+        self.adjacencyList[city_b].append(city_a)
+    def checkRouteCompletion(self):
+        for r in self.routeCardList:
+            start = r.city1
+            end = r.city2
+            if self.checkConnection(start, end):
+                print("Route from "+r.city1.name+" to "+r.city2.name+" Completed")
+                self.score += r.points
+                self.routeCardList.remove(r)
+    def checkConnection(self, start, end):
+        # If the player hasn't even visited these cities, they aren't connected
+        if start not in self.adjacencyList or end not in self.adjacencyList:
+            return False
+            
+        # Standard BFS setup
+        queue = deque([start])
+        visited = {start}
+        
+        while queue:
+            current_city = queue.popleft()
+            
+            # Did we find the destination?
+            if current_city == end:
+                return True
+            
+            # Check all neighbors of the current city
+            for neighbor in self.adjacencyList[current_city]:
+                if neighbor not in visited:
+                    visited.add(neighbor)
+                    queue.append(neighbor)
+                    
+        return False # No path found after checking everything
 
 class Track:
     def __init__(self, color, length, wildReq, city1, city2):
@@ -329,7 +372,8 @@ class City:
             self.adjacent.append(i)
 
 class Map:
-    def __init__(self):
+    def __init__(self, routeList):
+        self.routeList = routeList
         self.trackList, self.cityList = self.setUpTracks()
     def setUpTracks(self):
         trackList = []
@@ -349,9 +393,11 @@ class Map:
         cityList.append(b)
         cityList.append(c)
         cityList.append(d)
+
+        self.routeList.append(self.createRouteCard(b, d, 10))
         
         t1 = Track("red", 4, 0, a, b)
-        t2 = Track("blue", 7, 0, a, c)
+        t2 = Track("blue", 6, 0, a, c)
         t3 = Track("green", 5, 0, b, c)
         t4 = Track("white", 3, 0, a, d)
 
@@ -361,6 +407,9 @@ class Map:
         trackList.append(t4)
 
         return trackList, cityList
+    def createRouteCard(self, city1, city2, points):
+        newCard = RouteCard(city1, city2, points)
+        return newCard
     def draw_track_segments(self, surface, start_pos, end_pos, length, color):
         # 1. Calculate the distance and angle between cities
         dx = end_pos[0] - start_pos[0]
@@ -397,11 +446,30 @@ class Map:
         for c in self.cityList:
             pygame.draw.circle(surface, (50, 50, 50), c.position, 15) 
             pygame.draw.circle(surface, (255, 215, 0), c.position, 12)
+            text_surf = font.render(c.name, True, (0, 0, 0))
+            text_rect = text_surf.get_rect(center=(c.position[0], c.position[1] - 25))
+            surface.blit(text_surf, text_rect)
 
+class RouteCard:
+    def __init__(self, city1, city2, points):
+        self.city1 = city1
+        self.city2 = city2
+        self.points = points
+    def drawRouteCard(self, surface):
+        text_surf = font.render(self.city1.name + " to " + self.city2.name + " Points: " + str(self.points), True, (0, 0, 0))
+        text_rect = text_surf.get_rect(center=(1000, 200))
+        surface.blit(text_surf, text_rect)
 
+routeCards = []
 cards = deck()
 user = player(cards)
-map = Map()
+map = Map(routeCards)
+
+#test codes
+user.routeCardList.append(routeCards[0])
+for i in range(9):
+    user.hand[i] = 20
+
 while running:
     # poll for events
     # pygame.QUIT event means the user clicked X to close your window
@@ -420,6 +488,7 @@ while running:
 
                     if success:
                         print("Track bought!")
+                        user.checkRouteCompletion()
                     else:
                         print("Could not buy this track.")
                 else:
@@ -440,9 +509,12 @@ while running:
         input("end game?: ")
         pygame.quit()
         sys.exit()
-    #commented these out for now so it doesn't freeze and I can see the drawn map
+
     user.draw() 
     cards.draw()
+
+    for r in routeCards:
+        r.drawRouteCard(screen)
     #input("continue?: ")
     # flip() the display to put your work on screen
     pygame.display.flip()
