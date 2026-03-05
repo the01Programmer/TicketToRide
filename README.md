@@ -55,4 +55,6 @@ change log 10 Emmanuel mar 3
 
 change log 11 Ryder mar 4
 1. added the Choicemenu class that can display and respond to choises given to the user
-2. updated existing command line options to use the new system 
+2. updated existing command line options to use the new system
+3. in an in person meeting me and Martina decided to cut the longest route from this prototype since it requires a second player to be acuratly implemented.
+
