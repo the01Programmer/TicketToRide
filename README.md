@@ -52,3 +52,7 @@ change log 9- Ryder mar 3nd
 change log 10 Emmanuel mar 3
 1. added point loss on incomplete routes
 2. made tweaks on route card handling for better system
+
+change log 11 Ryder mar 4
+1. added the Choicemenu class that can display and respond to choises given to the user
+2. updated existing command line options to use the new system 
