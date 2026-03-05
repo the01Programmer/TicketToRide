@@ -8,10 +8,32 @@ from collections import deque
 # pygame setup
 pygame.init()
 screen = pygame.display.set_mode((1280, 720))
+pygame.display.set_caption("Ticket to Ride")
 clock = pygame.time.Clock()
 running = True
 font = pygame.font.SysFont('Corbel',35)
 smallfont = pygame.font.SysFont('Corbel',15)
+
+class MessageLog:
+    def __init__(self, max_lines=6):
+        self.max_lines = max_lines
+        self.lines = []
+
+    def add(self, text):
+        if text is None:
+            return
+        self.lines.append(str(text))
+        if len(self.lines) > self.max_lines:
+            self.lines = self.lines[-self.max_lines:]
+
+    def draw(self, surface):
+        base_x, base_y = 30, 600
+        for i, line in enumerate(self.lines):
+            txt = smallfont.render(line, True, (0, 0, 0))
+            surface.blit(txt, (base_x, base_y + i * 18))
+
+message_log = MessageLog()
+
 TRACK_COLORS = {
     "red": (255, 0, 0),
     "blue": (0, 0, 255),
@@ -137,7 +159,7 @@ def findtrackundermouse(mousepos, map, hitradius=18):
 def buytrack(player, track, deck):
     # 1. Make sure track is not already claimed
     if track.Owner is not None:
-        print("Track already claimed.")
+        message_log.add("Track already claimed.")
         return False
 
     # 2. Try to spend cards equal to the track length
@@ -146,7 +168,7 @@ def buytrack(player, track, deck):
     
     success = player.spend(numofcolor, track.length, deck)
     if not success:
-        print("Not enough cards to buy this track.")
+        message_log.add("Not enough cards to buy this track.")
         return False
 
     # 3. Give ownership of the track to that player
@@ -157,7 +179,6 @@ def buytrack(player, track, deck):
     # 4. Score points based on the track length
     player.score += scoreforlength(track.length)
 
-    #print("Track bought!")
     return True
 
 class deck:
@@ -167,7 +188,7 @@ class deck:
         self.graveyard = [12,12,12,12,12,12,12,12,14]
         self.todraw = [9,9]
         self.drawfirst = False
-        self.routedrawbutton = pygame.Rect(1000,100,230,40)
+        self.routedrawbutton = pygame.Rect(screen.get_width() -250, 100, 230, 40)
         self.carddrawbuttons = []
         for i in range(0,5):
             self.carddrawbuttons.append(pygame.Rect(30+(120*i),350,100,40))
@@ -191,79 +212,92 @@ class deck:
         if self.cards.empty():
             self.shuffle()
         return ret
-    def drawroutes(self,user, given):
-        choice = Choicemenu(self,['1','2','3',],"chose at least one of these three cards: " + given[0].city1.name + " to " + given[0].city2.name + " Points: " + str(given[0].points) + ", "+ given[1].city1.name + " to " + given[1].city2.name + " Points: " + str(given[1].points) + ", " + given[2].city1.name + " to " + given[2].city2.name + " Points: " + str(given[2].points))
+   
+    def drawroutes(self, user, given):
+        choice = Choicemenu(self, ['1','2','3'], "chose at least one of these three cards: " + given[0].city1.name + " to " + given[0].city2.name + " Points: " + str(given[0].points) + ", " + given[1].city1.name + " to " + given[1].city2.name + " Points: " + str(given[1].points) + ", " + given[2].city1.name + " to " + given[2].city2.name + " Points: " + str(given[2].points))
         screenshot = screen.copy()
-        #print("chose at least one of these three cards: " + given[0].city1.name + " to " + given[0].city2.name + " Points: " + str(given[0].points) + ", "+ given[1].city1.name + " to " + given[1].city2.name + " Points: " + str(given[1].points) + ", " + given[2].city1.name + " to " + given[2].city2.name + " Points: " + str(given[2].points))
-        temp1 = "-1"
-        temp2 = "-1"
-        
+        self.awns = 0
+
+        # First (mandatory) pick
         while self.awns != '1' and self.awns != '2' and self.awns != '3':
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     running = False
-        
+
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     choice.buttoncheck()
-                screen.fill("grey")
-                screen.blit(screenshot, (0, 0))  
-                choice.draw()
-                pygame.display.flip()
-            #self.awns = input("chose from [1,2,3]: ")
-        temp1 = self.awns
-        del choice
-        choice = Choicemenu(self,['1','2','3',"no"],"take another?: " + given[0].city1.name + " to " + given[0].city2.name + " Points: " + str(given[0].points) + ", "+ given[1].city1.name + " to " + given[1].city2.name + " Points: " + str(given[1].points) + ", " + given[2].city1.name + " to " + given[2].city2.name + " Points: " + str(given[2].points) + ", no")
-        while (self.awns != '1' and self.awns != '2' and self.awns != '3') or self.awns == temp1:
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    running = False
-        
-                if event.type == pygame.MOUSEBUTTONDOWN:
-                    choice.buttoncheck()
-            #awns2 = input("take another?[1,2,3] [n] to not: ")
-            if self.awns == "no" or self.awns == 'N':
-                user.routeCardList.append(given[int(temp1)-1])
-                self.routeCards.remove(given[int(temp1)-1])
-            user.checkRouteCompletion()
-                del choice
-                return
             screen.fill("grey")
-            screen.blit(screenshot, (0, 0))  
+            screen.blit(screenshot, (0, 0))
             choice.draw()
             pygame.display.flip()
-        temp2 = self.awns
+
+        first_idx = int(self.awns) - 1
+        selected = [first_idx]
         del choice
-        choice = Choicemenu(self,['y','n'],"take the last card?: " + given[0].city1.name + " to " + given[0].city2.name + " Points: " + str(given[0].points) + ", "+ given[1].city1.name + " to " + given[1].city2.name + " Points: " + str(given[1].points) + ", " + given[2].city1.name + " to " + given[2].city2.name + " Points: " + str(given[2].points) + ", no")
-        self.awns = -1
-        #awns3 = input("take the last card?[y/n]: ")
+
+        # Second (optional) pick or 'no'
+        opts2 = [o for o in ['1','2','3'] if (int(o)-1) != first_idx] + ['no']
+        choice = Choicemenu(self, opts2, "take another?: " + given[0].city1.name + " to " + given[0].city2.name + " Points: " + str(given[0].points) + ", " + given[1].city1.name + " to " + given[1].city2.name + " Points: " + str(given[1].points) + ", " + given[2].city1.name + " to " + given[2].city2.name + " Points: " + str(given[2].points) + ", no")
+        self.awns = 0
         while True:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     running = False
-        
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     choice.buttoncheck()
-            if self.awns == 'Y' or self.awns == 'y':
-                user.routeCardList.append(given[0])
-                user.routeCardList.append(given[1])
-                user.routeCardList.append(given[2])
-                self.routeCards.remove(given[0])
-                self.routeCards.remove(given[1])
-                self.routeCards.remove(given[2])
-                return
-            elif self.awns == 'n' :
-                user.routeCardList.append(given[int(temp1)-1])
-                user.routeCardList.append(given[int(temp2)-1])
-                self.routeCards.remove(given[int(temp1)-1])
-                self.routeCards.remove(given[int(temp2)-1])
-                return
+            if self.awns in opts2:
+                if self.awns == 'no':
+                    # finalize 1 pick
+                    for idx in sorted(selected, reverse=True):
+                        user.routeCardList.append(given[idx])
+                        self.routeCards.remove(given[idx])
+                    user.checkRouteCompletion()
+                    del choice
+                    return
+                else:
+                    second_idx = int(self.awns) - 1
+                    selected.append(second_idx)
+                    break
+
             screen.fill("grey")
-            screen.blit(screenshot, (0, 0))  
+            screen.blit(screenshot, (0, 0))
             choice.draw()
             pygame.display.flip()
+
+        del choice
+
+        # Third (optional): take the last remaining one? [y/n]
+        last_idx = ({0,1,2} - set(selected)).pop()
+        choice = Choicemenu(self, ['y','n'], "take the last card?: " + given[0].city1.name + " to " + given[0].city2.name + " Points: " + str(given[0].points) + ", " + given[1].city1.name + " to " + given[1].city2.name + " Points: " + str(given[1].points) + ", " + given[2].city1.name + " to " + given[2].city2.name + " Points: " + str(given[2].points) + ", no")
+        self.awns = 0
+        while self.awns not in ('y','Y','n','N'):
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    running = False
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    choice.buttoncheck()
+            screen.fill("grey")
+            screen.blit(screenshot, (0, 0))
+            choice.draw()
+            pygame.display.flip()
+
+        if self.awns in ('y','Y'):
+            selected.append(last_idx)
+
+        # finalize 2 or 3 picks
+        for idx in sorted(selected, reverse=True):
+            user.routeCardList.append(given[idx])
+            self.routeCards.remove(given[idx])
+        user.checkRouteCompletion()
+        del choice
+        return
+
             
     def findpusedbuttons(self,user):
         if self.routedrawbutton.collidepoint(pygame.mouse.get_pos()):
+            if len(self.routeCards) < 3:
+                message_log.add("Not enough route cards remaining to draw (need 3).")
+                return
             exclude = []
             one = random.randrange(0,len(self.routeCards),1)
             exclude.append(one)
@@ -311,8 +345,8 @@ class deck:
         
     def draw(self):
         pygame.draw.rect(screen,TRACK_COLORS.get("red"),self.routedrawbutton, border_radius=3)
-        text = font.render('draw new route' , True , (0,0,0))
-        screen.blit(text,(1000,100))
+        text = font.render('Draw new route' , True , (0,0,0))
+        screen.blit(text, text.get_rect(center=self.routedrawbutton.center))
         for i in range(0,5):
             pygame.draw.rect(screen,TRACK_COLORS.get(numbertocolor(self.piles[i])),[30+(120*i),350,100,40], border_radius=3)
             if i == self.todraw[0] or i == self.todraw[1]:
@@ -321,24 +355,11 @@ class deck:
                 text = font.render(f'{i+1}' , True , (255,255,255))
             else:
                 text = font.render(f'{i+1}' , True , (0,0,0))
-            screen.blit(text,(50+(120*i),350))
+            screen.blit(text, text.get_rect(center=(30+(120*i)+50, 350+20)))
         
 
 class player:
 
-    def __init__(self):
-        #never call this
-        self.score = 0
-        self.hand = [0,0,0,0,0,0,0,0]
-        #self.wild = 0
-        self.cars = 45#should be lowered for testing
-        deal = 4
-        while deal > 0:
-            gven = random.randrange(1,4,1)
-            if gven <= deal:
-                self.hand[random.randrange(0,7,1)] = gven
-                deal-=gven
-        pass
     def __init__(self, pull):
         self.score = 0
         self.hand = [0,0,0,0,0,0,0,0,0]
@@ -358,13 +379,12 @@ class player:
     def spend(self, color, amount, dis):
         if self.cars > amount:
             if amount <= self.hand[color]:
-                self.hand[color] -= amount
+                self.hand[color] -=amount
                 self.cars -=amount
                 dis.discard(color,amount)
                 return True
             elif amount <= self.hand[color] + self.hand[8]:
                 spendw = amount - self.hand[color]
-                #print(f"do you want to spend {spendw} wild cards to buy this rail?")
                 choice = Choicemenu(self,['y','n'],f"do you want to spend {spendw} wild cards to buy this rail?")
                 screenshot = screen.copy()
                 while True:
@@ -397,19 +417,22 @@ class player:
     def draw(self):
         if self.cars <=2:
             self.ending = True
-        #print(f"current hand state: red: {self.hand[0]}, green: {self.hand[1]}, blue: {self.hand[2]}, white: {self.hand[3]}, black: {self.hand[4]}, orange: {self.hand[5]}, pink: {self.hand[6]}, yellow: {self.hand[7]}, wild: {self.hand[8]}")
         for i in range(0,9):
             pygame.draw.rect(screen,TRACK_COLORS.get(numbertocolor(i)),[30+(60*i),15,30,40], border_radius=3)
             if i == 4:
                 text = font.render(f'{self.hand[i]}' , True , (255,255,255))
             else:
                 text = font.render(f'{self.hand[i]}' , True , (0,0,0))
-            screen.blit(text,(30+(60*i),15))
+            screen.blit(text, text.get_rect(center=(30+(60*i)+15, 15+20)))
             i = 0 
         for r in self.routeCardList:
             r.drawRouteCard(screen,1000,200+(100*i))
             i+=1
         
+        traintext = font.render(f"Trains: {self.cars}", True, (0,0,0))
+        trainrect = traintext.get_rect(bottomright=(screen.get_width() - 20, screen.get_height() - 20))
+        screen.blit(traintext, trainrect)
+
         pass
     def addConnection(self, city_a, city_b):
         if city_a not in self.adjacencyList:
@@ -425,21 +448,21 @@ class player:
                 start = r.city1
                 end = r.city2
                 if self.checkConnection(start, end):
-                    print("Route from "+r.city1.name+" to "+r.city2.name+" Completed")
+                    message_log.add("Route from "+r.city1.name+" to "+r.city2.name+" Completed")
                     self.score += r.points
                     r.completed = True
-                    print("Your Score: " + str(user.score))
+                    message_log.add("Your Score: " + str(user.score))
     def checkConnection(self, start, end):
         # If the player hasn't even visited these cities, they aren't connected
         if start not in self.adjacencyList or end not in self.adjacencyList:
             return False
             
         # Standard BFS setup
-        queue = deque([start])
+        queue_ = deque([start])
         visited = {start}
         
-        while queue:
-            current_city = queue.popleft()
+        while queue_:
+            current_city = queue_.popleft()
             
             # Did we find the destination?
             if current_city == end:
@@ -449,7 +472,7 @@ class player:
             for neighbor in self.adjacencyList[current_city]:
                 if neighbor not in visited:
                     visited.add(neighbor)
-                    queue.append(neighbor)
+                    queue_.append(neighbor)
                     
         return False # No path found after checking everything
 
@@ -481,10 +504,10 @@ class Map:
         trackList = []
         cityList = []
         #set up default tracks manually
-        a = City("A", 100, 100)
-        b = City("B", 100, 300)
-        c = City("C", 400, 300)
-        d = City("D", 300, 80)
+        a = City("A", 100, 120)
+        b = City("B", 100, 320)
+        c = City("C", 400, 320)
+        d = City("D", 300, 100)
 
         a.addAdjacent([b,c,d])
         b.addAdjacent([a,c])
@@ -566,7 +589,7 @@ class RouteCard:
             text_surf = font.render(self.city1.name + " to " + self.city2.name + " Points: " + str(self.points) + " Completed", True, (0, 0, 0))
         else:
             text_surf = font.render(self.city1.name + " to " + self.city2.name + " Points: " + str(self.points), True, (0, 0, 0))
-        text_rect = text_surf.get_rect(center=(x, y))
+        text_rect = text_surf.get_rect(midright=(surface.get_width() - 20, y))
         surface.blit(text_surf, text_rect)
 
 class Choicemenu:
@@ -587,7 +610,6 @@ class Choicemenu:
             pygame.draw.rect(screen,(0,0,0),(30+(120*i),500,100,40),border_radius=3)
             text = font.render(f"{self.options[i]}" , True , (255,255,255))
             screen.blit(text,(50+(120*i),500))
-            #text = font.render(self.text , True , (0,0,0))
             screen.blit(self.text,(50,450))
 
 
@@ -602,6 +624,10 @@ del cards.routeCards[0]
 #for i in range(9):
 #    user.hand[i] = 20
 
+game_over = False
+game_over_processed = False
+exit_button = pygame.Rect(500, 300, 280, 60)
+
 while running:
     # poll for events
     # pygame.QUIT event means the user clicked X to close your window
@@ -609,26 +635,32 @@ while running:
         if event.type == pygame.QUIT:
             running = False
         
-        if event.type == pygame.MOUSEBUTTONDOWN:
-            if event.button == 1:   # left mouse click
-                mousepos = pygame.mouse.get_pos()
+        if not game_over:
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if event.button == 1:   # left mouse click
+                    mousepos = pygame.mouse.get_pos()
 
-                track = findtrackundermouse(mousepos, map)
+                    track = findtrackundermouse(mousepos, map)
 
-                if track is not None:
-                    success = buytrack(user, track, cards)
+                    if track is not None:
+                        success = buytrack(user, track, cards)
 
-                    if success:
-                        print("Track bought!")
-                        print("Your Score: " + str(user.score))
-                        user.checkRouteCompletion()
+                        if success:
+                            message_log.add("Track bought!")
+                            message_log.add("Your Score: " + str(user.score))
+                            user.checkRouteCompletion()
+                        else:
+                            message_log.add("Could not buy this track.")
                     else:
-                        print("Could not buy this track.")
-                else:
-                    cards.findpusedbuttons(user)
-        if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_SPACE:
-                cards.drawfrompile(user)
+                        cards.findpusedbuttons(user)
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_SPACE:
+                    cards.drawfrompile(user)
+        else:
+            if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+                if exit_button.collidepoint(pygame.mouse.get_pos()):
+                    pygame.quit()
+                    sys.exit()
 
 
     # fill the screen with a color to wipe away anything from last frame
@@ -637,25 +669,39 @@ while running:
     # RENDER YOUR GAME HERE
     map.drawMap(screen)
 
-    if user.ending:
+    if user.ending and not game_over_processed:
         for r in user.routeCardList:
             if not r.completed:
                 user.score -= r.points
-        print(f"game over you got: {user.score} points")
-        input("end game?: ")
-        #add the score loss for incomplete routes
-        pygame.quit()
-        sys.exit()
+        message_log.add(f"game over you got: {user.score} points")
+        game_over = True
+        game_over_processed = True
 
     user.draw() 
     cards.draw()
-    #choice.draw()
-    #input("continue?: ")
+    message_log.draw(screen)
+
+    if game_over:
+        overlay = pygame.Surface((1280, 720), pygame.SRCALPHA)
+        overlay.fill((0, 0, 0, 140))
+        screen.blit(overlay, (0, 0))
+
+        title = font.render("Game Over", True, (255, 255, 255))
+        score_txt = font.render(f"Final Score: {user.score}", True, (255, 255, 255))
+        tip_txt = smallfont.render("Click Exit to close the game", True, (220, 220, 220))
+
+        screen.blit(title, (520, 180))
+        screen.blit(score_txt, (500, 230))
+        screen.blit(tip_txt, (520, 265))
+
+        pygame.draw.rect(screen, (200, 60, 60), exit_button, border_radius=8)
+        exit_label = font.render("Exit", True, (255, 255, 255))
+        label_rect = exit_label.get_rect(center=exit_button.center)
+        screen.blit(exit_label, label_rect.topleft)
+
     # flip() the display to put your work on screen
     pygame.display.flip()
 
     clock.tick(60)  # limits FPS to 60
 
 pygame.quit()
-
-

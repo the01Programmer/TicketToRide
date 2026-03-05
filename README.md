@@ -58,3 +58,9 @@ change log 11 Ryder mar 4
 2. updated existing command line options to use the new system
 3. in an in person meeting me and Martina decided to cut the longest route from this prototype since it requires a second player to be acuratly implemented.
 
+change log 12 – Martina - March 4
+
+1. Cleaned up spacing so GUI looks more organized.
+2. Moved command line messages to show up on GUI instead (including adding the number of trains the user still has and what their score is).
+3. Fixed drawroutes function so that when user selects a route card, it gets added to their list of routes
+4. Made it so if there are less than 3 route cards available to draw, the user cannot draw any more route cards.
