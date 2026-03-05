@@ -52,3 +52,20 @@ change log 9- Ryder mar 3nd
 change log 10 Emmanuel mar 3
 1. added point loss on incomplete routes
 2. made tweaks on route card handling for better system
+
+change log 11 Ryder mar 4
+1. added the Choicemenu class that can display and respond to choises given to the user
+2. updated existing command line options to use the new system
+3. in an in person meeting me and Martina decided to cut the longest route from this prototype since it requires a second player to be acuratly implemented.
+
+change log 12 – Martina - March 4
+
+1. Cleaned up spacing so GUI looks more organized.
+2. Moved command line messages to show up on GUI instead (including adding the number of trains the user still has and what their score is).
+3. Fixed drawroutes function so that when user selects a route card, it gets added to their list of routes
+
+4. Made it so if there are less than 3 route cards available to draw, the user cannot draw any more route cards.
+
+change log 13 – Ryder - March 4
+1. fixed softlock cased by the max carts being too low to trigger the ending when unable to play
+2. made the border on black cards visible
