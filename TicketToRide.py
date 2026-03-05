@@ -350,7 +350,10 @@ class deck:
         for i in range(0,5):
             pygame.draw.rect(screen,TRACK_COLORS.get(numbertocolor(self.piles[i])),[30+(120*i),350,100,40], border_radius=3)
             if i == self.todraw[0] or i == self.todraw[1]:
-                pygame.draw.rect(screen,(0,0,0),[30+(120*i),350,100,40], 2,border_radius=3)
+                if self.piles[i] == 4:
+                    pygame.draw.rect(screen,(255,255,255),[30+(120*i),350,100,40], 2,border_radius=3)
+                else:
+                    pygame.draw.rect(screen,(0,0,0),[30+(120*i),350,100,40], 2,border_radius=3)
             if self.piles[i] == 4:
                 text = font.render(f'{i+1}' , True , (255,255,255))
             else:
@@ -706,3 +709,4 @@ while running:
 
 
 pygame.quit()
+
