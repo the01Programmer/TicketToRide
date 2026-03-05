@@ -1,4 +1,6 @@
-CMPT 2276 Course Project - Ticket to Ride - How to Play Application change log 1- Ryder feb 18th
+CMPT 2276 Course Project - Ticket to Ride - How to Play Application 
+
+change log 1- Ryder feb 18th
 
 1. added basic pygame setup
 2. set up a player class with variables for thraking the hand, wild cards, and score
