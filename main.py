@@ -23,6 +23,8 @@ choice = -1
 cards = player_classes.deck(screen)
 user = player_classes.player(cards)
 map = map_classes.Map(cards.routeCards)
+cpu = player_classes.enemy(cards)
+map.trackList[0].Owner = cpu
 
 #test codes
 user.routeCardList.append(cards.routeCards[0])
