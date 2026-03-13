@@ -71,3 +71,6 @@ change log 12 – Martina - March 4
 change log 13 – Ryder - March 4
 1. fixed softlock cased by the max carts being too low to trigger the ending when unable to play
 2. made the border on black cards visible
+
+change log 14 – Ryder - March 1
+1. spread out files between (currently) 4 sepreate files main, map_classes, player_classes and utility a file for tutorial functions is planned but not implemented.
