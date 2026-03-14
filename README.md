@@ -76,4 +76,5 @@ change log 14 – Ryder - March 10
 1. spread out files between (currently) 4 sepreate files main, map_classes, player_classes and utility a file for tutorial functions is planned but not implemented.
 change log 14 – Ryder - March 10
 1. added a basic version of the cpu that can claim ownership of a track so that other developers can start work that relies on that element of the cpu class
-2. the cpu was added to player_classes as i plan for it to inheret from the base player class. 
+2. the cpu was added to player_classes as i plan for it to inheret from the base player class.
+3. added a guide to adding new feture in the new file system
