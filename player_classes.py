@@ -303,4 +303,33 @@ class player:
                     queue_.append(neighbor)
                     
         return False # No path found after checking everything
+
+class enemy:
+    def __init__(self, pull):
+        self.score = 0
+        self.hand = [0,0,0,0,0,0,0,0,0]
+        self.routes = []
+        self.ending =  False
+        self.cars = 18#real max should be 45
+        self.hand[pull.get()] += 1
+        self.hand[pull.get()] += 1
+        self.hand[pull.get()] += 1
+        self.hand[pull.get()] += 1
+        self.adjacencyList = {}
+        self.routeCardList = []
+        self.ownedTrackList = []
+        self.awns = 0
+        pass
+    def addConnection(self, city_a, city_b):
+        if city_a not in self.adjacencyList:
+            self.adjacencyList[city_a] = []
+        if city_b not in self.adjacencyList:
+            self.adjacencyList[city_b] = []
+    def buy(self, tracks):
+        for i in tracks:
+            if self.hand[utility.colortonumber(i.color)] >= i.length:
+                i.Owner = self
+                self.ownedTrackList.append(i)
+                self.addConnection(i.city1, i.city2)
+                self.score += utility.scoreforlength(i.length)
         
