@@ -1,0 +1,17 @@
+main:
+	Add if your feature has functions that need to be called every frame, insulated before the game or use the event tracker, but avoid defining functions and classes here to ensure clarity 
+
+player_classes:
+	Add if your function manipulates the contents of map_classes or directly interacts with the player/CPU classes, like the deck.
+
+map_classes:
+	Add if your feature stores data related to the current state of the game, separate from the player or deck.
+
+utility:
+	Add if your feature can/will be used by multiple other files.  
+
+tutorial:
+	Add if your feature takes data from any of the other files and uses it to help the user learn to play Ticket to Ride.
+
+create a new file:
+	If you believe your feature does not fall under the existing files, add it to a file called TEMP and discuss with one other team member on how it should be handled. This could mean adding the new file or broadening the descriptions in this file. If TEMP is empty, delete it.
