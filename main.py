@@ -57,13 +57,17 @@ while running:
                             utility.message_log.add("Track bought!")
                             utility.message_log.add("Your Score: " + str(user.score))
                             user.checkRouteCompletion()
+                            cpu.turn(map.trackList, cards)
                         else:
                             utility.message_log.add("Could not buy this track.")
                     else:
-                        cards.findpusedbuttons(user,screen)
+                        if cards.findpusedbuttons(user,screen):
+                            cpu.turn(map.trackList, cards)
+
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_SPACE:
                     cards.drawfrompile(user)
+                    cpu.turn(map.trackList, cards)
         else:
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                 if exit_button.collidepoint(pygame.mouse.get_pos()):
