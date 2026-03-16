@@ -74,7 +74,12 @@ change log 13 – Ryder - March 4
 
 change log 14 – Ryder - March 10  
 1. spread out files between (currently) 4 sepreate files main, map_classes, player_classes and utility a file for tutorial functions is planned but not implemented.
-change log 14 – Ryder - March 10
+change log 14 – Ryder - March 14
 1. added a basic version of the cpu that can claim ownership of a track so that other developers can start work that relies on that element of the cpu class
 2. the cpu was added to player_classes as i plan for it to inheret from the base player class.
 3. added a guide to adding new feture in the new file system
+
+change log 14 – Ryder - March 15
+1. updated the cpu to be able to take all current actions althoug it currently has no ai implemented so it can't use any stratagy. this implemetation would be good for a game ment to teach the user the basic controles since this cpu is incappable of being a chalange unless it gets lucky.
+2. added new functions to the deck class that the cpu can use
+3. updated the main file to start the cpus turn after the player makes an action
