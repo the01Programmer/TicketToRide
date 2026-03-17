@@ -17,7 +17,7 @@ class deck:
         self.routedrawbutton = pygame.Rect(screen.get_width() -250, 100, 230, 40)
         self.carddrawbuttons = []
         for i in range(0,5):
-            self.carddrawbuttons.append(pygame.Rect(30+(120*i),350,100,40))
+            self.carddrawbuttons.append(pygame.Rect(30+(120*i),650,100,40))
         total = 110
         while total >0:
             draw = random.randrange(0,9,1)
@@ -167,24 +167,24 @@ class deck:
                 self.piles[self.todraw[1]] = self.get()
             self.todraw[1] = 9
             self.todraw[0] = 9
-            self.drawfirst = False
+            self.drawfirst = False //350
         
     def draw(self,screen):
         pygame.draw.rect(screen,utility.TRACK_COLORS.get("red"),self.routedrawbutton, border_radius=3)
         text = utility.font.render('Draw new route' , True , (0,0,0))
         screen.blit(text, text.get_rect(center=self.routedrawbutton.center))
         for i in range(0,5):
-            pygame.draw.rect(screen,utility.TRACK_COLORS.get(utility.numbertocolor(self.piles[i])),[30+(120*i),350,100,40], border_radius=3)
+            pygame.draw.rect(screen,utility.TRACK_COLORS.get(utility.numbertocolor(self.piles[i])),[30+(120*i),650,100,40], border_radius=3)
             if i == self.todraw[0] or i == self.todraw[1]:
                 if self.piles[i] == 4:
-                    pygame.draw.rect(screen,(255,255,255),[30+(120*i),350,100,40], 2,border_radius=3)
+                    pygame.draw.rect(screen,(255,255,255),[30+(120*i),650,100,40], 2,border_radius=3)
                 else:
-                    pygame.draw.rect(screen,(0,0,0),[30+(120*i),350,100,40], 2,border_radius=3)
+                    pygame.draw.rect(screen,(0,0,0),[30+(120*i),650,100,40], 2,border_radius=3)
             if self.piles[i] == 4:
                 text = utility.font.render(f'{i+1}' , True , (255,255,255))
             else:
                 text = utility.font.render(f'{i+1}' , True , (0,0,0))
-            screen.blit(text, text.get_rect(center=(30+(120*i)+50, 350+20)))
+            screen.blit(text, text.get_rect(center=(30+(120*i)+50, 650+20)))
 
 class player:
 
