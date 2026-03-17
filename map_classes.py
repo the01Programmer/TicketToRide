@@ -5,7 +5,7 @@ import time
 import sys
 import math
 import utility; print('Import successful')
-import player_classes
+from player_classes import player, enemy
 from collections import deque
 
 class Track:
@@ -116,20 +116,27 @@ class Map:
         
             highlight = None
 
-            if isinstance(t.Owner, player_classes.player):
+            if isinstance(t.Owner, player):
                 highlight = (255, 255, 150, 180)
 
-            if isinstance(t.Owner, player_classes.enemy):
+            elif isinstance(t.Owner, enemy):
                 highlight = (255, 80, 80, 180)
     
             self.draw_track_segments(surface, start, end, t.length, color, highlight_color=highlight)
 
         for c in self.cityList:
+            if c.station == True:
+                highlight = (255, 255, 150, 180)
+                pygame.draw.circle(surface, highlight, c.position, 21) 
             pygame.draw.circle(surface, (50, 50, 50), c.position, 15) 
             pygame.draw.circle(surface, (255, 215, 0), c.position, 12)
             text_surf = utility.font.render(c.name, True, (0, 0, 0))
             text_rect = text_surf.get_rect(center=(c.position[0], c.position[1] - 25))
             surface.blit(text_surf, text_rect)
+    
+    def get_tracks_touching_city(self, city):
+        return [t for t in self.trackList if t.city1 == city or t.city2 == city]
+
 
 class RouteCard:
     def __init__(self, city1, city2, points):

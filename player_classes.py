@@ -40,9 +40,9 @@ class deck:
         return ret
    
     def drawroutes(self, user, given, screen):
+        self.awns = None
         choice = utility.Choicemenu(self, ['1','2','3'], "chose at least one of these three cards: " + given[0].city1.name + " to " + given[0].city2.name + " Points: " + str(given[0].points) + ", " + given[1].city1.name + " to " + given[1].city2.name + " Points: " + str(given[1].points) + ", " + given[2].city1.name + " to " + given[2].city2.name + " Points: " + str(given[2].points))
         screenshot = screen.copy()
-        self.awns = 0
 
         # First (mandatory) pick
         while self.awns != '1' and self.awns != '2' and self.awns != '3':
@@ -63,8 +63,8 @@ class deck:
 
         # Second (optional) pick or 'no'
         opts2 = [o for o in ['1','2','3'] if (int(o)-1) != first_idx] + ['no']
+        self.awns = None
         choice = utility.Choicemenu(self, opts2, "take another?: " + given[0].city1.name + " to " + given[0].city2.name + " Points: " + str(given[0].points) + ", " + given[1].city1.name + " to " + given[1].city2.name + " Points: " + str(given[1].points) + ", " + given[2].city1.name + " to " + given[2].city2.name + " Points: " + str(given[2].points) + ", no")
-        self.awns = 0
         while True:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -94,8 +94,8 @@ class deck:
 
         # Third (optional): take the last remaining one? [y/n]
         last_idx = ({0,1,2} - set(selected)).pop()
+        self.awns = None
         choice = utility.Choicemenu(self, ['y','n'], "take the last card?: " + given[0].city1.name + " to " + given[0].city2.name + " Points: " + str(given[0].points) + ", " + given[1].city1.name + " to " + given[1].city2.name + " Points: " + str(given[1].points) + ", " + given[2].city1.name + " to " + given[2].city2.name + " Points: " + str(given[2].points) + ", no")
-        self.awns = 0
         while self.awns not in ('y','Y','n','N'):
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -128,6 +128,7 @@ class deck:
         if self.routedrawbutton.collidepoint(pygame.mouse.get_pos()):
             if len(self.routeCards) < 3:
                 utility.message_log.add("Not enough route cards remaining to draw (need 3).")
+                utility.message_log.add("")
                 return False
             exclude = []
             one = random.randrange(0,len(self.routeCards),1)
@@ -139,7 +140,6 @@ class deck:
             return True
         for i in range(0,5):
             if self.carddrawbuttons[i].collidepoint(pygame.mouse.get_pos()):
-                
                 self.todraw[self.drawfirst] = i
                 if self.piles[i] != 8:
                     self.drawfirst = not self.drawfirst
@@ -213,7 +213,7 @@ class player:
         self.routeCardList = []
         self.ownedTrackList = []
         self.usedTrackList = []
-        self.awns = 0
+        self.awns = None
         pass
     def spend(self, color, amount, dis,screen):
         if self.cars > amount:
@@ -224,12 +224,13 @@ class player:
                 return True
             elif amount <= self.hand[color] + self.hand[8]:
                 spendw = amount - self.hand[color]
+                self.awns = None
                 choice = utility.Choicemenu(self,['y','n'],f"do you want to spend {spendw} wild cards to buy this rail?")
                 screenshot = screen.copy()
                 while True:
                     for event in pygame.event.get():
                         if event.type == pygame.QUIT:
-                            running = False
+                            return False
         
                         if event.type == pygame.MOUSEBUTTONDOWN:
                             choice.buttoncheck()
@@ -269,9 +270,9 @@ class player:
             i+=1
         
         traintext = utility.font.render(f"Trains: {self.cars}", True, (0,0,0))
-        trainrect = traintext.get_rect(bottomright=(screen.get_width() - 20, screen.get_height() - 60))
+        trainrect = traintext.get_rect(bottomright=(screen.get_width() - 25, screen.get_height() - 60))
         stationtext = utility.font.render(f"Stations: {self.stations}", True, (0,0,0))
-        stationrect = traintext.get_rect(bottomright=(screen.get_width() - 20, screen.get_height() - 20))
+        stationrect = stationtext.get_rect(bottomright=(screen.get_width() - 25, screen.get_height() - 20))
         screen.blit(traintext, trainrect)
         screen.blit(stationtext, stationrect)
 
@@ -294,6 +295,7 @@ class player:
                     self.score += r.points
                     r.completed = True
                     utility.message_log.add("Your Score: " + str(self.score))
+                    utility.message_log.add("")
     def checkConnection(self, start, end):
         # If the player hasn't even visited these cities, they aren't connected
         if start not in self.adjacencyList or end not in self.adjacencyList:
@@ -362,7 +364,9 @@ class enemy:
 
     def buy(self, tracks, dis):
         for i in tracks:
-            if self.hand[utility.colortonumber(i.color)] >= i.length:
+            if i.Owner is not None:
+                return False
+            elif self.hand[utility.colortonumber(i.color)] >= i.length:
                 i.Owner = self
                 self.ownedTrackList.append(i)
                 self.addConnection(i.city1, i.city2)
@@ -370,24 +374,40 @@ class enemy:
                 self.hand[utility.colortonumber(i.color)] -=i.length
                 self.cars -=i.length
                 dis.discard(utility.colortonumber(i.color),i.length)
-                utility.message_log.add(f"cpu bought a track")
+                utility.message_log.add(f"CPU bought a track")
+                utility.message_log.add("")
+
+                if all(t.Owner is not None for t in tracks):
+                    self.ending = True
+
                 return True
+            
         return False
     
     def drawcard(self,deck):
         first = random.randrange(0,4)
         card = deck.piles[first]
         deck.drawfrompile(self,first)
-        utility.message_log.add(f"cpu drew {utility.numbertocolor(first)}")
+        utility.message_log.add(f"CPU drew {utility.numbertocolor(first)}")
         if card != 8:
             card = 8
             second = first
-            while card == 8 or second == first:
+
+            # Try up to 10 times to find a non-wild in a different slot
+            attempts = 0
+            while attempts < 10:
                 second = random.randrange(0,4)
-                print(second)
-                card = deck.piles[second]
+                if second != first and deck.piles[second] != 8:
+                    break
+                attempts += 1
+
+            # If we failed, CPU just draws one card and ends turn
+            if attempts == 10:
+                return
+
             deck.drawfrompile(self,second)
-            utility.message_log.add(f"cpu drew {utility.numbertocolor(second)}")
+            utility.message_log.add(f"CPU drew {utility.numbertocolor(second)}")
+            utility.message_log.add("")
         
 
     def drawroute(self,deck):

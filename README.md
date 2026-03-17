@@ -61,7 +61,6 @@ change log 11 Ryder mar 4
 3. in an in person meeting me and Martina decided to cut the longest route from this prototype since it requires a second player to be acuratly implemented.
 
 change log 12 – Martina - March 4
-
 1. Cleaned up spacing so GUI looks more organized.
 2. Moved command line messages to show up on GUI instead (including adding the number of trains the user still has and what their score is).
 3. Fixed drawroutes function so that when user selects a route card, it gets added to their list of routes
@@ -98,3 +97,19 @@ change log 15 - Martina - March 16
     - added mouse detection for if a player clicks on a city. if they do, they will use their station unless they don't have one.
     - edited running loop so at the end of the game, it gives a player extra points if the station wasn't used 
 
+change log 16 - Martina - March 17
+1. edits to main.py
+    - edited game_over code block to make exit screen look better
+    - added blank lines after each line printed in message logs to make message log more readable
+    - added station logic once game ends that allows player to use their station (i.e. select a track) if they have placed one down (and rechecks route completetion after that)
+2. edits to map_classes.py
+    - edited drawMap function to add highlighting when a station is placed on a city
+    - added helper function get_tracks_touching_city to map class to return all tracks touching a city
+3. edits to player_clases.py
+    - edited enemy buy method so that if all tracks have been claimed, enemy.ending is true (ends game)
+    - edited enemy buy method so that if track is owned, it returns false
+    - fixed infinite loop in drawcard method in enemy class where it would keep trying to draw the second card forever (could happen if there are only wild cards to draw from)
+    - added blank lines after each line printed in message logs to make message log more readable ()
+4. edits to utility.py
+    - edited buytrack method so that if all tracks have been claimed, player.ending is true (ends game)
+    - added new function choose_track_from_list for a pop up that allows the player to select from tracks that they can use with the station they placed down

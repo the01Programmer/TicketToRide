@@ -42,7 +42,7 @@ while running:
         if event.type == pygame.QUIT:
             running = False
         
-        if not game_over:
+        elif not game_over:
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if event.button == 1:   # left mouse click
                     mousepos = pygame.mouse.get_pos()
@@ -51,23 +51,27 @@ while running:
                     city = utility.findcityundermouse(mousepos, map)
 
                     if track is not None:
-                        success = utility.buytrack(user, track, cards,screen)
+                        success = utility.buytrack(user, track, map.trackList, cards, screen)
                         if success:
                             utility.message_log.add("Track bought!")
                             utility.message_log.add("Your Score: " + str(user.score))
+                            utility.message_log.add("")
                             user.checkRouteCompletion()
                             cpu.turn(map.trackList, cards)
                         else:
                             utility.message_log.add("Could not buy this track.")
+                            utility.message_log.add("")
 
-                    elif city is not None:
-                        success = utility.usestation(user, city, screen)
+                    if city is not None:
+                        success = utility.placestation(user, city, screen)
                         if success:
-                            utility.message_log.add("Station used!")
+                            utility.message_log.add("Station placed!")
+                            utility.message_log.add("")
                             user.checkRouteCompletion()
                             cpu.turn(map.trackList, cards)
                         else:
-                            utility.message_log.add("Could not use a station.")
+                            utility.message_log.add("Could not place a station.")
+                            utility.message_log.add("")
                         
                     else:
                         if cards.findpusedbuttons(user,screen):
@@ -90,37 +94,59 @@ while running:
     # RENDER YOUR GAME HERE
     map.drawMap(screen)
 
-    if user.ending and not game_over_processed:
+    if (user.ending or cpu.ending) and not game_over_processed:
+        
+        # station logic
+        used_temp_track = None
+        if user.stations < 1: 
+            station_city = next((c for c in map.cityList if c.station), None)
+            if station_city:
+                # get all tracks touching that city, BUT only CPU-owned ones
+                options = [t for t in map.get_tracks_touching_city(station_city) if isinstance(t.Owner, player_classes.enemy)]
+                if options:
+                    chosen = utility.choose_track_from_list(options, screen)
+                    if chosen:
+                        user.addConnection(chosen.city1, chosen.city2)
+                        used_temp_track = chosen
+
+        # re-check all routes now that station track is applied
+        for r in user.routeCardList:
+            if not r.completed and user.checkConnection(r.city1, r.city2):
+                user.score += r.points
+                r.completed = True
+
         for r in user.routeCardList:
             if not r.completed:
                 user.score -= r.points
-        if user.stations > 0:
-            user.score += 4 * user.stations
-        utility.message_log.add(f"game over you got: {user.score} points")
+
+        user.score += 4 * user.stations
+        utility.message_log.add(f"Game over you got: {user.score} points")
         game_over = True
         game_over_processed = True
 
     user.draw(screen) 
     cards.draw(screen)
     utility.message_log.draw(screen)
-
+        
     if game_over:
         overlay = pygame.Surface((1280, 720), pygame.SRCALPHA)
-        overlay.fill((0, 0, 0, 140))
+        overlay.fill((0, 0, 0, 170))
         screen.blit(overlay, (0, 0))
 
-        title = font.render("Game Over", True, (255, 255, 255))
-        score_txt = font.render(f"Final Score: {user.score}", True, (255, 255, 255))
-        tip_txt = smallfont.render("Click Exit to close the game", True, (220, 220, 220))
+        title = font.render("GAME OVER", True, (255, 240, 240))
+        title_rect = title.get_rect(center=(640, 200))
+        
+        score_txt = font.render(f"Final Score: {user.score}", True, (240, 240, 240))
+        score_rect = score_txt.get_rect(center=(640, 260))
+        
+        screen.blit(title, title_rect)
+        screen.blit(score_txt, score_rect)
 
-        screen.blit(title, (520, 180))
-        screen.blit(score_txt, (500, 230))
-        screen.blit(tip_txt, (520, 265))
-
-        pygame.draw.rect(screen, (200, 60, 60), exit_button, border_radius=8)
+        pygame.draw.rect(screen, (220, 80, 80), exit_button, border_radius=12)
+        pygame.draw.rect(screen, (255, 255, 255), exit_button, 2, border_radius=12)
         exit_label = font.render("Exit", True, (255, 255, 255))
         label_rect = exit_label.get_rect(center=exit_button.center)
-        screen.blit(exit_label, label_rect.topleft)
+        screen.blit(exit_label, label_rect)
 
     # flip() the display to put your work on screen
     pygame.display.flip()
@@ -129,4 +155,3 @@ while running:
 
 
 pygame.quit()
-
