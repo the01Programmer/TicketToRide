@@ -149,6 +149,17 @@ def findtrackundermouse(mousepos, map, hitradius=18):
 
     return None  # no track under mouse
 
+def findcityundermouse(mousepos, map, hitradius=18):
+    mx, my = mousepos
+
+    for city in map.cityList:
+        cx, cy = city.position
+
+        # distance from mouse to city center
+        if math.hypot(mx - cx, my - cy) <= hitradius:
+            return city
+
+    return None
 
 def buytrack(player, track, deck, screen):
     # 1. Make sure track is not already claimed
@@ -172,6 +183,18 @@ def buytrack(player, track, deck, screen):
 
     # 4. Score points based on the track length
     player.score += scoreforlength(track.length)
+
+    return True
+
+def usestation(player, city, screen):
+    if city.station == True:
+        return False
+    
+    if player.stations < 1:
+        return False
+
+    city.station = True
+    player.stations -= 1
 
     return True
 

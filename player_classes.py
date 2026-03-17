@@ -202,7 +202,8 @@ class player:
         self.hand = [0,0,0,0,0,0,0,0,0]
         self.routes = []
         self.ending =  False
-        self.cars = 18#real max should be 45
+        self.cars = 18 # real max should be 45
+        self.stations = 1 # real number of stations should be 3
         deal = 4
         self.hand[pull.get()] += 1
         self.hand[pull.get()] += 1
@@ -211,6 +212,7 @@ class player:
         self.adjacencyList = {}
         self.routeCardList = []
         self.ownedTrackList = []
+        self.usedTrackList = []
         self.awns = 0
         pass
     def spend(self, color, amount, dis,screen):
@@ -267,8 +269,11 @@ class player:
             i+=1
         
         traintext = utility.font.render(f"Trains: {self.cars}", True, (0,0,0))
-        trainrect = traintext.get_rect(bottomright=(screen.get_width() - 20, screen.get_height() - 20))
+        trainrect = traintext.get_rect(bottomright=(screen.get_width() - 20, screen.get_height() - 60))
+        stationtext = utility.font.render(f"Stations: {self.stations}", True, (0,0,0))
+        stationrect = traintext.get_rect(bottomright=(screen.get_width() - 20, screen.get_height() - 20))
         screen.blit(traintext, trainrect)
+        screen.blit(stationtext, stationrect)
 
         pass
     def addConnection(self, city_a, city_b):

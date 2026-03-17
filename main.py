@@ -18,7 +18,6 @@ running = True
 font = pygame.font.SysFont('Corbel',35)
 smallfont = pygame.font.SysFont('Corbel',15)
 
-
 choice = -1
 cards = player_classes.deck(screen)
 user = player_classes.player(cards)
@@ -49,10 +48,10 @@ while running:
                     mousepos = pygame.mouse.get_pos()
 
                     track = utility.findtrackundermouse(mousepos, map)
+                    city = utility.findcityundermouse(mousepos, map)
 
                     if track is not None:
                         success = utility.buytrack(user, track, cards,screen)
-
                         if success:
                             utility.message_log.add("Track bought!")
                             utility.message_log.add("Your Score: " + str(user.score))
@@ -60,6 +59,16 @@ while running:
                             cpu.turn(map.trackList, cards)
                         else:
                             utility.message_log.add("Could not buy this track.")
+
+                    elif city is not None:
+                        success = utility.usestation(user, city, screen)
+                        if success:
+                            utility.message_log.add("Station used!")
+                            user.checkRouteCompletion()
+                            cpu.turn(map.trackList, cards)
+                        else:
+                            utility.message_log.add("Could not use a station.")
+                        
                     else:
                         if cards.findpusedbuttons(user,screen):
                             cpu.turn(map.trackList, cards)
@@ -85,6 +94,8 @@ while running:
         for r in user.routeCardList:
             if not r.completed:
                 user.score -= r.points
+        if user.stations > 0:
+            user.score += 4 * user.stations
         utility.message_log.add(f"game over you got: {user.score} points")
         game_over = True
         game_over_processed = True
