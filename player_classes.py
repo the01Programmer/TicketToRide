@@ -118,12 +118,17 @@ class deck:
         del choice
         return
 
-            
+    def cpudrawroutes(self,cpu,amount):
+        exclude = []
+        for i in range(amount):
+            temp = (random.choice([i for i in range(len(self.routeCards)) if i not in exclude]))
+            exclude.append(temp)
+
     def findpusedbuttons(self,user,screen):
         if self.routedrawbutton.collidepoint(pygame.mouse.get_pos()):
             if len(self.routeCards) < 3:
                 utility.message_log.add("Not enough route cards remaining to draw (need 3).")
-                return
+                return False
             exclude = []
             one = random.randrange(0,len(self.routeCards),1)
             exclude.append(one)
@@ -131,7 +136,7 @@ class deck:
             exclude.append(two)
             three = random.choice([i for i in range(len(self.routeCards)) if i not in exclude])
             self.drawroutes(user,[self.routeCards[one],self.routeCards[two],self.routeCards[three]],screen)
-            return
+            return True
         for i in range(0,5):
             if self.carddrawbuttons[i].collidepoint(pygame.mouse.get_pos()):
                 
@@ -142,6 +147,7 @@ class deck:
                     self.todraw[0] = i
                     self.todraw[1] = 9
                     self.drawfirst = False
+        return False
                     
     def discard(self,color, amount):
         self.graveyard[color]+=amount
@@ -156,7 +162,10 @@ class deck:
                 self.graveyard[draw]-=1
                 self.cards.put(draw)
                 total-=1
-    def drawfrompile(self,user):
+    def drawfrompile(self,user,targ = None):
+        if targ != None:
+            user.addtohand(self.piles[targ])
+            self.piles[targ] = self.get()
         if self.todraw[0] != 9:
             user.addtohand(self.piles[self.todraw[0]])
             if self.todraw[1] != 9:
@@ -320,16 +329,68 @@ class enemy:
         self.ownedTrackList = []
         self.awns = 0
         pass
+
+    def turn(self,tracks,deck):
+        routesdone = True 
+        #for i in self.routes:
+        #    if i.completed == False:
+        #        routesdone = False
+        #if  routesdone == True:
+        #    self.drawroute(deck)
+        #    return
+
+
+        if not self.buy(tracks,deck):
+            self.drawcard(deck)
+
+    def addtohand(self,color):
+        self.hand[color] +=1
+
+    def addroute(self,route):
+        self.routes.append(route)
+
     def addConnection(self, city_a, city_b):
         if city_a not in self.adjacencyList:
             self.adjacencyList[city_a] = []
         if city_b not in self.adjacencyList:
             self.adjacencyList[city_b] = []
-    def buy(self, tracks):
+
+    def buy(self, tracks, dis):
         for i in tracks:
             if self.hand[utility.colortonumber(i.color)] >= i.length:
                 i.Owner = self
                 self.ownedTrackList.append(i)
                 self.addConnection(i.city1, i.city2)
                 self.score += utility.scoreforlength(i.length)
+                self.hand[utility.colortonumber(i.color)] -=i.length
+                self.cars -=i.length
+                dis.discard(utility.colortonumber(i.color),i.length)
+                utility.message_log.add(f"cpu bought a track")
+                return True
+        return False
+    
+    def drawcard(self,deck):
+        first = random.randrange(0,4)
+        card = deck.piles[first]
+        deck.drawfrompile(self,first)
+        utility.message_log.add(f"cpu drew {utility.numbertocolor(first)}")
+        if card != 8:
+            card = 8
+            second = first
+            while card == 8 or second == first:
+                second = random.randrange(0,4)
+                print(second)
+                card = deck.piles[second]
+            deck.drawfrompile(self,second)
+            utility.message_log.add(f"cpu drew {utility.numbertocolor(second)}")
+        
+
+    def drawroute(self,deck):
+        drawammount = random.randrange(0,3)
+        deck.cpudrawroutes(self,drawammount)
+
+
+
+
+            
         
