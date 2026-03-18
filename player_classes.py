@@ -119,10 +119,16 @@ class deck:
         return
 
     def cpudrawroutes(self,cpu,amount):
+        if len(self.routeCards) < 3:
+                utility.message_log.add("Not enough route cards remaining to draw (need 3).")
+                utility.message_log.add("")
+                return
         exclude = []
         for i in range(amount):
-            temp = (random.choice([i for i in range(len(self.routeCards)) if i not in exclude]))
+            temp = (random.choice([f for f in range(len(self.routeCards)) if i not in exclude]))
             exclude.append(temp)
+            cpu.routeCardList.append(self.routeCards[temp])
+            utility.message_log.add(f"cpu drew a route")
 
     def findpusedbuttons(self,user,screen):
         if self.routedrawbutton.collidepoint(pygame.mouse.get_pos()):
@@ -339,12 +345,12 @@ class enemy:
 
     def turn(self,tracks,deck):
         routesdone = True 
-        #for i in self.routes:
-        #    if i.completed == False:
-        #        routesdone = False
-        #if  routesdone == True:
-        #    self.drawroute(deck)
-        #    return
+        for i in self.routeCardList:
+            if i.completed == False:
+                routesdone = False
+        if  routesdone == True:
+            self.drawroute(deck)
+            return
 
 
         if not self.buy(tracks,deck):
@@ -388,9 +394,9 @@ class enemy:
         first = random.randrange(0,4)
         card = deck.piles[first]
         deck.drawfrompile(self,first)
-        utility.message_log.add(f"CPU drew {utility.numbertocolor(first)}")
+        utility.message_log.add(f"CPU drew {utility.numbertocolor(card)}")
         if card != 8:
-            card = 8
+
             second = first
 
             # Try up to 10 times to find a non-wild in a different slot
@@ -406,7 +412,8 @@ class enemy:
                 return
 
             deck.drawfrompile(self,second)
-            utility.message_log.add(f"CPU drew {utility.numbertocolor(second)}")
+            card = deck.piles[first]
+            utility.message_log.add(f"CPU drew {utility.numbertocolor(card)}")
             utility.message_log.add("")
         
 
