@@ -113,3 +113,10 @@ change log 16 - Martina - March 17
 4. edits to utility.py
     - edited buytrack method so that if all tracks have been claimed, player.ending is true (ends game)
     - added new function choose_track_from_list for a pop up that allows the player to select from tracks that they can use with the station they placed down
+
+change log 14 – Ryder - March 18
+    player classes
+    - fixed issue where cpu would display a diffrent card from the one it drawed
+    - fixed issue where the cpu wouldn't check the correct list when checking its completed routes
+    - finished the decks cpudrawroutes as the cpus route check was disabled so i didn't see the problem
+
