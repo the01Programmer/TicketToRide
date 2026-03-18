@@ -61,11 +61,9 @@ change log 11 Ryder mar 4
 3. in an in person meeting me and Martina decided to cut the longest route from this prototype since it requires a second player to be acuratly implemented.
 
 change log 12 – Martina - March 4
-
 1. Cleaned up spacing so GUI looks more organized.
 2. Moved command line messages to show up on GUI instead (including adding the number of trains the user still has and what their score is).
 3. Fixed drawroutes function so that when user selects a route card, it gets added to their list of routes
-
 4. Made it so if there are less than 3 route cards available to draw, the user cannot draw any more route cards.
 
 change log 13 – Ryder - March 4
@@ -83,3 +81,35 @@ change log 14 – Ryder - March 15
 1. updated the cpu to be able to take all current actions althoug it currently has no ai implemented so it can't use any stratagy. this implemetation would be good for a game ment to teach the user the basic controles since this cpu is incappable of being a chalange unless it gets lucky.
 2. added new functions to the deck class that the cpu can use
 3. updated the main file to start the cpus turn after the player makes an action
+
+change log 15 - Martina - March 16
+1. edits to map_classes.py file: 
+    - edited functions draw_track_segments and drawmap to add a feature that highlights tracks that are owned by the player or the cpu using different colors (yellow for player and red for cpu)
+    - added field station to City class
+2. edit to player_classes.py file:
+    - edited player class to include a station field
+    - edited draw function to display number of stations
+    - added usedTrackList field to player class
+3. edits to utility.py file:
+    - added a function findcityundermouse to detect whether user clicked on a city to use a station
+    - added a function usestation to be able to use stations on a city
+4. edits to main.py file:
+    - added mouse detection for if a player clicks on a city. if they do, they will use their station unless they don't have one.
+    - edited running loop so at the end of the game, it gives a player extra points if the station wasn't used 
+
+change log 16 - Martina - March 17
+1. edits to main.py
+    - edited game_over code block to make exit screen look better
+    - added blank lines after each line printed in message logs to make message log more readable
+    - added station logic once game ends that allows player to use their station (i.e. select a track) if they have placed one down (and rechecks route completetion after that)
+2. edits to map_classes.py
+    - edited drawMap function to add highlighting when a station is placed on a city
+    - added helper function get_tracks_touching_city to map class to return all tracks touching a city
+3. edits to player_clases.py
+    - edited enemy buy method so that if all tracks have been claimed, enemy.ending is true (ends game)
+    - edited enemy buy method so that if track is owned, it returns false
+    - fixed infinite loop in drawcard method in enemy class where it would keep trying to draw the second card forever (could happen if there are only wild cards to draw from)
+    - added blank lines after each line printed in message logs to make message log more readable ()
+4. edits to utility.py
+    - edited buytrack method so that if all tracks have been claimed, player.ending is true (ends game)
+    - added new function choose_track_from_list for a pop up that allows the player to select from tracks that they can use with the station they placed down
