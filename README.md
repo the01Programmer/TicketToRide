@@ -119,4 +119,7 @@ change log 14 – Ryder - March 18
     - fixed issue where cpu would display a diffrent card from the one it drawed
     - fixed issue where the cpu wouldn't check the correct list when checking its completed routes
     - finished the decks cpudrawroutes as the cpus route check was disabled so i didn't see the problem
+    - made the buy function able to use wild cards structured so that we could rework it to use logic to decide to use them
+    main
+    - added the ability to declair a winner between the user and the cpu but it currently only shows up in the text box and not the main game over screen
 
