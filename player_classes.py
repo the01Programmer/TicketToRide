@@ -368,11 +368,44 @@ class enemy:
         if city_b not in self.adjacencyList:
             self.adjacencyList[city_b] = []
 
+    def checkRouteCompletion(self, ):
+        for r in self.routeCardList:
+            if not r.completed:
+                start = r.city1
+                end = r.city2
+                if self.checkConnection(start, end):
+                    utility.message_log.add("cpu: Route from "+r.city1.name+" to "+r.city2.name+" Completed")
+                    self.score += r.points
+                    r.completed = True
+                    utility.message_log.add("cpu's Score: " + str(self.score))
+                    utility.message_log.add("")
+    def checkConnection(self, start, end):
+        # If the player hasn't even visited these cities, they aren't connected
+        if start not in self.adjacencyList or end not in self.adjacencyList:
+            return False
+            
+        # Standard BFS setup
+        queue_ = deque([start])
+        visited = {start}
+        
+        while queue_:
+            current_city = queue_.popleft()
+            
+            # Did we find the destination?
+            if current_city == end:
+                return True
+            
+            # Check all neighbors of the current city
+            for neighbor in self.adjacencyList[current_city]:
+                if neighbor not in visited:
+                    visited.add(neighbor)
+                    queue_.append(neighbor)
+                    
+        return False # No path found after checking everything
+
     def buy(self, tracks, dis):
         for i in tracks:
-            if i.Owner is not None:
-                return False
-            elif self.hand[utility.colortonumber(i.color)] >= i.length:
+            if self.hand[utility.colortonumber(i.color)] >= i.length and i.Owner is None:
                 i.Owner = self
                 self.ownedTrackList.append(i)
                 self.addConnection(i.city1, i.city2)
@@ -381,6 +414,24 @@ class enemy:
                 self.cars -=i.length
                 dis.discard(utility.colortonumber(i.color),i.length)
                 utility.message_log.add(f"CPU bought a track")
+                utility.message_log.add(f"CPU's score: {self.score}")
+                utility.message_log.add("")
+
+                if all(t.Owner is not None for t in tracks):
+                    self.ending = True
+
+                return True
+            elif self.hand[utility.colortonumber(i.color)] + self.hand[8] >= i.length:
+                i.Owner = self
+                self.ownedTrackList.append(i)
+                self.addConnection(i.city1, i.city2)
+                self.score += utility.scoreforlength(i.length)
+                self.hand[8] -=  i.length - self.hand[utility.colortonumber(i.color)]
+                self.hand[utility.colortonumber(i.color)] = 0
+                self.cars -=i.length
+                dis.discard(utility.colortonumber(i.color),i.length)
+                utility.message_log.add(f"CPU bought a track")
+                utility.message_log.add(f"CPU's score: {self.score}")
                 utility.message_log.add("")
 
                 if all(t.Owner is not None for t in tracks):
@@ -395,6 +446,7 @@ class enemy:
         card = deck.piles[first]
         deck.drawfrompile(self,first)
         utility.message_log.add(f"CPU drew {utility.numbertocolor(card)}")
+        utility.message_log.add("")
         if card != 8:
 
             second = first
