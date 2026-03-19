@@ -113,3 +113,6 @@ change log 16 - Martina - March 17
 4. edits to utility.py
     - edited buytrack method so that if all tracks have been claimed, player.ending is true (ends game)
     - added new function choose_track_from_list for a pop up that allows the player to select from tracks that they can use with the station they placed down
+
+change log 17 - Braelyn - March 18
+1. created a pop-up quiz to ask the player how many points the track is worth when they buy it
