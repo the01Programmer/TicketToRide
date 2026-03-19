@@ -119,8 +119,21 @@ while running:
             if not r.completed:
                 user.score -= r.points
 
+        for r in cpu.routeCardList:
+            if not r.completed and user.checkConnection(r.city1, r.city2):
+                user.score += r.points
+                r.completed = True
+
+        for r in cpu.routeCardList:
+            if not r.completed:
+                user.score -= r.points
+
         user.score += 4 * user.stations
-        utility.message_log.add(f"Game over you got: {user.score} points")
+        utility.message_log.add(f"Game over you got: {user.score} points and the cpu got {cpu.score} points")
+        if user.score > cpu.score:
+            utility.message_log.add(f"you won")
+        else:
+            utility.message_log.add(f"the cpu won")
         game_over = True
         game_over_processed = True
 

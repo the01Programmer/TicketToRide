@@ -119,10 +119,16 @@ class deck:
         return
 
     def cpudrawroutes(self,cpu,amount):
+        if len(self.routeCards) < 3:
+                utility.message_log.add("Not enough route cards remaining to draw (need 3).")
+                utility.message_log.add("")
+                return
         exclude = []
         for i in range(amount):
-            temp = (random.choice([i for i in range(len(self.routeCards)) if i not in exclude]))
+            temp = (random.choice([f for f in range(len(self.routeCards)) if i not in exclude]))
             exclude.append(temp)
+            cpu.routeCardList.append(self.routeCards[temp])
+            utility.message_log.add(f"cpu drew a route")
 
     def findpusedbuttons(self,user,screen):
         if self.routedrawbutton.collidepoint(pygame.mouse.get_pos()):
@@ -339,12 +345,12 @@ class enemy:
 
     def turn(self,tracks,deck):
         routesdone = True 
-        #for i in self.routes:
-        #    if i.completed == False:
-        #        routesdone = False
-        #if  routesdone == True:
-        #    self.drawroute(deck)
-        #    return
+        for i in self.routeCardList:
+            if i.completed == False:
+                routesdone = False
+        if  routesdone == True:
+            self.drawroute(deck)
+            return
 
 
         if not self.buy(tracks,deck):
@@ -362,11 +368,44 @@ class enemy:
         if city_b not in self.adjacencyList:
             self.adjacencyList[city_b] = []
 
+    def checkRouteCompletion(self, ):
+        for r in self.routeCardList:
+            if not r.completed:
+                start = r.city1
+                end = r.city2
+                if self.checkConnection(start, end):
+                    utility.message_log.add("cpu: Route from "+r.city1.name+" to "+r.city2.name+" Completed")
+                    self.score += r.points
+                    r.completed = True
+                    utility.message_log.add("cpu's Score: " + str(self.score))
+                    utility.message_log.add("")
+    def checkConnection(self, start, end):
+        # If the player hasn't even visited these cities, they aren't connected
+        if start not in self.adjacencyList or end not in self.adjacencyList:
+            return False
+            
+        # Standard BFS setup
+        queue_ = deque([start])
+        visited = {start}
+        
+        while queue_:
+            current_city = queue_.popleft()
+            
+            # Did we find the destination?
+            if current_city == end:
+                return True
+            
+            # Check all neighbors of the current city
+            for neighbor in self.adjacencyList[current_city]:
+                if neighbor not in visited:
+                    visited.add(neighbor)
+                    queue_.append(neighbor)
+                    
+        return False # No path found after checking everything
+
     def buy(self, tracks, dis):
         for i in tracks:
-            if i.Owner is not None:
-                return False
-            elif self.hand[utility.colortonumber(i.color)] >= i.length:
+            if self.hand[utility.colortonumber(i.color)] >= i.length and i.Owner is None and self.cars > i.length:
                 i.Owner = self
                 self.ownedTrackList.append(i)
                 self.addConnection(i.city1, i.city2)
@@ -375,12 +414,32 @@ class enemy:
                 self.cars -=i.length
                 dis.discard(utility.colortonumber(i.color),i.length)
                 utility.message_log.add(f"CPU bought a track")
+                utility.message_log.add(f"CPU's score: {self.score}")
                 utility.message_log.add("")
 
                 if all(t.Owner is not None for t in tracks):
                     self.ending = True
 
                 return True
+            elif self.hand[utility.colortonumber(i.color)] + self.hand[8] >= i.length and self.cars > i.length and i.Owner is None:
+                i.Owner = self
+                self.ownedTrackList.append(i)
+                self.addConnection(i.city1, i.city2)
+                self.score += utility.scoreforlength(i.length)
+                self.hand[8] -=  i.length - self.hand[utility.colortonumber(i.color)]
+                self.hand[utility.colortonumber(i.color)] = 0
+                self.cars -=i.length
+                dis.discard(utility.colortonumber(i.color),i.length)
+                utility.message_log.add(f"CPU bought a track")
+                utility.message_log.add(f"CPU's score: {self.score}")
+                utility.message_log.add("")
+
+                if all(t.Owner is not None for t in tracks):
+                    self.ending = True
+
+                return True
+        if self.cars <2:
+            self.ending = true
             
         return False
     
@@ -388,9 +447,10 @@ class enemy:
         first = random.randrange(0,4)
         card = deck.piles[first]
         deck.drawfrompile(self,first)
-        utility.message_log.add(f"CPU drew {utility.numbertocolor(first)}")
+        utility.message_log.add(f"CPU drew {utility.numbertocolor(card)}")
+        utility.message_log.add("")
         if card != 8:
-            card = 8
+
             second = first
 
             # Try up to 10 times to find a non-wild in a different slot
@@ -406,7 +466,8 @@ class enemy:
                 return
 
             deck.drawfrompile(self,second)
-            utility.message_log.add(f"CPU drew {utility.numbertocolor(second)}")
+            card = deck.piles[first]
+            utility.message_log.add(f"CPU drew {utility.numbertocolor(card)}")
             utility.message_log.add("")
         
 
