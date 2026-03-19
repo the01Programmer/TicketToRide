@@ -4,6 +4,7 @@ import queue
 import time
 import sys
 import math
+import tutorial
 from collections import deque
 pygame.init()
 font = pygame.font.SysFont('Corbel',35)
@@ -187,6 +188,7 @@ def buytrack(player, track, tracks, deck, screen):
     player.addConnection(track.city1, track.city2)
 
     # 4. Score points based on the track length
+    tutorial.pointsQuiz(scoreforlength(track.length))
     player.score += scoreforlength(track.length)
 
     if all(t.Owner is not None for t in tracks):

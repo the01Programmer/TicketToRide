@@ -114,7 +114,7 @@ change log 16 - Martina - March 17
     - edited buytrack method so that if all tracks have been claimed, player.ending is true (ends game)
     - added new function choose_track_from_list for a pop up that allows the player to select from tracks that they can use with the station they placed down
 
-change log 14 – Ryder - March 18
+change log 17 – Ryder - March 18
     player classes
     - fixed issue where cpu would display a diffrent card from the one it drawed
     - fixed issue where the cpu wouldn't check the correct list when checking its completed routes
@@ -123,3 +123,5 @@ change log 14 – Ryder - March 18
     main
     - added the ability to declair a winner between the user and the cpu but it currently only shows up in the text box and not the main game over screen
 
+change log 18 - Braelyn - March 18
+1. created a pop-up quiz to ask the player how many points the track is worth when they buy it
