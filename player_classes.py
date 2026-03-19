@@ -405,7 +405,7 @@ class enemy:
 
     def buy(self, tracks, dis):
         for i in tracks:
-            if self.hand[utility.colortonumber(i.color)] >= i.length and i.Owner is None:
+            if self.hand[utility.colortonumber(i.color)] >= i.length and i.Owner is None and self.cars > i.length:
                 i.Owner = self
                 self.ownedTrackList.append(i)
                 self.addConnection(i.city1, i.city2)
@@ -421,7 +421,7 @@ class enemy:
                     self.ending = True
 
                 return True
-            elif self.hand[utility.colortonumber(i.color)] + self.hand[8] >= i.length:
+            elif self.hand[utility.colortonumber(i.color)] + self.hand[8] >= i.length and self.cars > i.length and i.Owner is None:
                 i.Owner = self
                 self.ownedTrackList.append(i)
                 self.addConnection(i.city1, i.city2)
@@ -438,6 +438,8 @@ class enemy:
                     self.ending = True
 
                 return True
+        if self.cars <2:
+            self.ending = true
             
         return False
     
