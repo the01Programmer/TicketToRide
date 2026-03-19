@@ -43,20 +43,21 @@ class Map:
         brest = City("Brest", 130, 330)
         paris = City("Paris", 270, 310)
         bruxelles = City("Bruxelles", 310, 230)
-        amsterdam = City("Amsterdam", 340, 190)
+        amsterdam = City("Amsterdam", 280, 190)
         essen = City("Essen", 400, 180)
         frankfurt = City("Frankfurt", 400, 250)
         berlin = City("Berlin", 520, 170)
-        danzig = City("Danzig", 600, 130)
+        danzig = City("Danzig", 650, 130)
+        copenhagen = City("Kobenhavn", 480, 100)
+        stockholm = City("Stockholm", 600, 50)
 
         # --- 2. Central Europe ---
         munchen = City("Munchen", 480, 300)
         zurich = City("Zurich", 390, 350)
         wien = City("Wien", 600, 300)
         warszawa = City("Warszawa", 670, 180)
-        wilno = City("Wilno", 770, 130)
+        wilno = City("Wilno", 770, 170)
         budapest = City("Budapest", 650, 340)
-        praha = City("Praha", 550, 250)
 
         # --- 3. Southern Europe & Mediterranean ---
         madrid = City("Madrid", 140, 490)
@@ -64,96 +65,38 @@ class Map:
         cadiz = City("Cadiz", 140, 610)
         barcelona = City("Barcelona", 220, 530)
         pamplona = City("Pamplona", 190, 430)
-        marseille = City("Marseille", 300, 470)
-        nice = City("Nice", 360, 450)
+        marseille = City("Marseille", 350, 470)
         venezia = City("Venezia", 470, 400)
         roma = City("Roma", 480, 500)
         brindisi = City("Brindisi", 580, 530)
         palermo = City("Palermo", 520, 610)
-        athens = City("Athina", 720, 600)
+        athens = City("Athina", 720, 550)
 
         # --- 4. Eastern Europe & Balkans ---
-        petrograd = City("Petrograd", 860, 80)
-        riga = City("Riga", 730, 90)
-        moskva = City("Moskva", 880, 170)
-        smolensk = City("Smolensk", 820, 210)
-        kyiv = City("Kyiv", 800, 290)
-        kharkov = City("Kharkov", 880, 300)
-        rostov = City("Rostov", 880, 400)
-        sochi = City("Sochi", 870, 460)
-        sevastopol = City("Sevastopol", 800, 420)
+        petrograd = City("Petrograd", 960, 80)
+        riga = City("Riga", 750, 90)
+        moskva = City("Moskva", 980, 170)
+        smolensk = City("Smolensk", 920, 210)
+        kyiv = City("Kyiv", 800, 250)
+        kharkov = City("Kharkov", 980, 300)
+        rostov = City("Rostov", 980, 400)
+        sochi = City("Sochi", 1000, 460)
+        sevastopol = City("Sevastopol", 900, 410)
         bucuresti = City("Bucuresti", 760, 370)
-        sofia = City("Sofia", 710, 450)
-        sarajevo = City("Sarajevo", 600, 430)
+        sofia = City("Sofia", 760, 480)
+        sarajevo = City("Sarajevo", 650, 450)
         zagrab = City("Zagrab", 550, 390)
-        constantinople = City("Constantinople", 850, 520)
+        constantinople = City("Constantinople", 850, 500)
         angora = City("Angora", 880, 580)
-        erzurum = City("Erzurum", 890, 630)
+        erzurum = City("Erzurum", 1020, 550)
         smyrna = City("Smyrna", 780, 610)
-
-        # --- 1. Western Europe & British Isles ---
-        edinburgh.addAdjacent([london])
-        london.addAdjacent([edinburgh, dieppe, amsterdam])
-        dieppe.addAdjacent([london, brest, paris, bruxelles])
-        brest.addAdjacent([dieppe, paris, pamplona])
-        paris.addAdjacent([dieppe, brest, pamplona, marseille, zurich, bruxelles, frankfurt])
-        bruxelles.addAdjacent([dieppe, amsterdam, paris, frankfurt])
-        amsterdam.addAdjacent([london, bruxelles, essen, frankfurt])
-
-        # --- 2. Central Europe & Germany ---
-        essen.addAdjacent([amsterdam, bruxelles, frankfurt, berlin])
-        frankfurt.addAdjacent([amsterdam, essen, berlin, praha, munchen, zurich, bruxelles, paris])
-        berlin.addAdjacent([essen, frankfurt, praha, warszawa, danzig])
-        danzig.addAdjacent([berlin, warszawa, riga])
-        munchen.addAdjacent([frankfurt, zurich, venezia, wien, praha])
-        zurich.addAdjacent([paris, munchen, venezia, marseille])
-        praha.addAdjacent([berlin, frankfurt, munchen, wien, warszawa])
-
-        # --- 3. Iberian Peninsula & Mediterranean ---
-        lisboa.addAdjacent([cadiz, madrid])
-        madrid.addAdjacent([lisboa, cadiz, barcelona, pamplona])
-        cadiz.addAdjacent([lisboa, madrid])
-        pamplona.addAdjacent([madrid, brest, paris, marseille, barcelona])
-        barcelona.addAdjacent([madrid, pamplona, marseille])
-        marseille.addAdjacent([barcelona, pamplona, paris, zurich, nice])
-        nice.addAdjacent([marseille, zurich, venezia, roma])
-        roma.addAdjacent([nice, venezia, brindisi, palermo])
-        palermo.addAdjacent([roma, brindisi, athens])
-        brindisi.addAdjacent([roma, palermo, athens])
-        venezia.addAdjacent([zurich, munchen, zagrab, roma, nice])
-
-        # --- 4. Eastern Europe & Balkans ---
-        warszawa.addAdjacent([berlin, danzig, wilno, kyiv, wien, praha])
-        wilno.addAdjacent([riga, petrograd, smolensk, kyiv, warszawa])
-        riga.addAdjacent([danzig, wilno, petrograd])
-        petrograd.addAdjacent([riga, wilno, moskva])
-        moskva.addAdjacent([petrograd, smolensk, kharkov])
-        smolensk.addAdjacent([wilno, moskva, kyiv])
-        kyiv.addAdjacent([wilno, warszawa, budapest, bucuresti, smolensk, kharkov])
-        kharkov.addAdjacent([moskva, kyiv, rostov])
-        rostov.addAdjacent([kharkov, sochi, sevastopol])
-        wien.addAdjacent([praha, warszawa, budapest, zagrab, munchen])
-        budapest.addAdjacent([wien, zagrab, sarajevo, bucuresti, kyiv])
-        zagrab.addAdjacent([wien, venezia, sarajevo, budapest])
-        sarajevo.addAdjacent([zagrab, budapest, sofia, athens])
-        athens.addAdjacent([brindisi, palermo, sarajevo, sofia, smyrna])
-        sofia.addAdjacent([sarajevo, bucuresti, constantinople, athens])
-        bucuresti.addAdjacent([budapest, kyiv, sevastopol, constantinople, sofia])
-        sevastopol.addAdjacent([bucuresti, kyiv, rostov, sochi, constantinople])
-        sochi.addAdjacent([rostov, sevastopol, erzurum])
-
-        # --- 5. Turkey & Middle East ---
-        constantinople.addAdjacent([sofia, bucuresti, sevastopol, angora, smyrna])
-        smyrna.addAdjacent([athens, constantinople, angora])
-        angora.addAdjacent([constantinople, smyrna, erzurum])
-        erzurum.addAdjacent([angora, sochi])
 
         cityList.extend([
             edinburgh, london, dieppe, brest, paris, bruxelles, amsterdam, essen, frankfurt, berlin, danzig,
-            munchen, zurich, wien, warszawa, wilno, budapest, praha,
-            madrid, lisboa, cadiz, barcelona, pamplona, marseille, nice, venezia, roma, brindisi, palermo, athens,
+            munchen, zurich, wien, warszawa, wilno, budapest,
+            madrid, lisboa, cadiz, barcelona, pamplona, marseille, venezia, roma, brindisi, palermo, athens,
             petrograd, riga, moskva, smolensk, kyiv, kharkov, rostov, sochi, sevastopol, bucuresti, sofia, 
-            sarajevo, zagrab, constantinople, angora, erzurum, smyrna
+            sarajevo, zagrab, constantinople, angora, erzurum, smyrna, copenhagen, stockholm
         ])
 
         self.routeList.append(self.createRouteCard(edinburgh, constantinople, 21)) # Long Route
@@ -169,7 +112,7 @@ class Map:
             (london, dieppe, "wild", 2, True),
             (london, dieppe, "wild", 2, True),
             (dieppe, brest, "orange", 2, False),
-            (dieppe, paris, "wild", 1, False),
+            (dieppe, paris, "pink", 1, False),
             (dieppe, bruxelles, "green", 2, False),
             (brest, paris, "black", 3, False),
             (brest, pamplona, "pink", 4, False),
@@ -179,13 +122,15 @@ class Map:
             (paris, frankfurt, "orange", 3, True),
             (paris, zurich, "wild", 3, False),
             (paris, marseille, "wild", 4, False),
+            (paris, pamplona, "blue", 4, False),
+            (paris, pamplona, "green", 4, False),
 
             # Central / Northern
             (amsterdam, bruxelles, "black", 1, False),
             (amsterdam, essen, "yellow", 3, False),
             (amsterdam, frankfurt, "white", 2, False),
             (bruxelles, frankfurt, "blue", 2, False),
-            (essen, berlin, "blue", 4, False),
+            (essen, berlin, "blue", 2, False),
             (essen, frankfurt, "green", 2, False),
             (frankfurt, berlin, "black", 3, True),
             (frankfurt, berlin, "red", 3, True),
@@ -193,12 +138,16 @@ class Map:
             (berlin, danzig, "wild", 4, False),
             (berlin, warszawa, "pink", 4, True),
             (berlin, warszawa, "yellow", 4, True),
-            (berlin, praha, "red", 3, False),
+            (berlin, wien, "green", 3, False),
             (munchen, zurich, "yellow", 2, False),
             (munchen, venezia, "blue", 2, False),
             (munchen, wien, "orange", 3, False),
-            (praha, wien, "yellow", 3, False),
-            (praha, warszawa, "wild", 4, False),
+            (wien, warszawa, "blue", 4, False),
+            (copenhagen, essen, "wild", 3, False),
+            (copenhagen, essen, "wild", 3, False),
+            (copenhagen, stockholm, "yellow", 3, False),
+            (copenhagen, stockholm, "white", 3, False),
+            (stockholm, petrograd, "wild", 8, False),
 
             # Southern / Iberian
             (lisboa, cadiz, "blue", 2, False),
@@ -210,15 +159,14 @@ class Map:
             (pamplona, barcelona, "wild", 2, False),
             (pamplona, marseille, "red", 4, False),
             (barcelona, marseille, "wild", 4, False),
-            (marseille, nice, "wild", 2, False),
-            (nice, zurich, "wild", 3, False),
-            (nice, roma, "wild", 4, False),
+            (marseille, roma, "wild", 4, False),
+            (marseille, zurich, "pink", 2, False),
             (roma, venezia, "black", 2, False),
             (roma, brindisi, "white", 2, False),
             (roma, palermo, "wild", 4, False),
             (palermo, brindisi, "wild", 3, False),
-            (palermo, athens, "wild", 4, False),
             (venezia, zagrab, "wild", 2, False),
+            (venezia, zurich, "green", 2, False),
 
             # Eastern / Balkans
             (danzig, riga, "black", 3, False),
@@ -231,18 +179,20 @@ class Map:
             (wilno, smolensk, "yellow", 3, False),
             (warszawa, kyiv, "wild", 4, False),
             (warszawa, wien, "blue", 4, False),
+            (warszawa, danzig, "wild", 2, False),
             (wien, budapest, "white", 1, True),
             (wien, budapest, "red", 1, True),
             (wien, zagrab, "wild", 2, False),
             (budapest, zagrab, "orange", 2, False),
             (budapest, sarajevo, "pink", 3, False),
             (budapest, kyiv, "wild", 6, False),
-            (kyiv, smolensk, "wild", 3, False),
+            (kyiv, smolensk, "red", 3, False),
             (kyiv, kharkov, "wild", 4, False),
             (kyiv, bucuresti, "wild", 4, False),
             (kharkov, moskva, "wild", 4, False),
+            (smolensk, moskva, "orange", 2, False),
             (kharkov, rostov, "green", 2, False),
-            (rostov, moskva, "wild", 2, False),
+            (kharkov, kyiv, "wild", 4, False),
             (rostov, sevastopol, "wild", 4, False),
             (rostov, sochi, "wild", 2, False),
             (bucuresti, budapest, "wild", 4, False),
@@ -251,17 +201,20 @@ class Map:
             (bucuresti, sofia, "wild", 2, False),
             (sarajevo, zagrab, "red", 3, False),
             (sarajevo, sofia, "wild", 2, False),
-            (sarajevo, athens, "wild", 4, False),
+            (sarajevo, athens, "green", 4, False),
             (athens, sofia, "pink", 3, False),
             (athens, smyrna, "wild", 2, False),
+            (athens, brindisi, "wild", 4, False),
             (constantinople, sevastopol, "wild", 4, False),
             (constantinople, sofia, "blue", 3, False),
             (constantinople, smyrna, "wild", 2, False),
             (constantinople, angora, "wild", 2, False),
             (smyrna, angora, "orange", 3, False),
-            (angora, erzurum, "wild", 3, False),
+            (smyrna, palermo, "wild", 6, False),
+            (angora, erzurum, "black", 3, False),
             (erzurum, sochi, "red", 3, False),
-            (sevastopol, sochi, "wild", 1, False)
+            (sevastopol, sochi, "wild", 2, False),
+            (sevastopol, erzurum, "wild", 4, False)
         ]
 
         # Batch process the data into your Track objects
@@ -271,9 +224,13 @@ class Map:
             new_track = Track(color, length, 0, c1, c2)
             trackList.append(new_track)
             
-            # Add to adjacency list (only if not already there to avoid duplicates in BFS)
-            c1.addAdjacent([c2])
-            c2.addAdjacent([c1])
+            # 2. Update Adjacency (The Graph)
+            # We only add the neighbor if it's not already in the list
+            # This prevents double-routes from breaking BFS/Dijkstra logic
+            if c2 not in c1.adjacent:
+                c1.addAdjacent([c2])
+            if c1 not in c2.adjacent:
+                c2.addAdjacent([c1])
 
         return trackList, cityList
     def createRouteCard(self, city1, city2, points):

@@ -193,7 +193,7 @@ class player:
         self.hand = [0,0,0,0,0,0,0,0,0]
         self.routes = []
         self.ending =  False
-        self.cars = 18#real max should be 45
+        self.cars = 45#real max should be 45
         deal = 4
         self.hand[pull.get()] += 1
         self.hand[pull.get()] += 1
