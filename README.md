@@ -74,3 +74,6 @@ change log 13 – Ryder - March 4
 
 change log 14 – Ryder - March 1
 1. spread out files between (currently) 4 sepreate files main, map_classes, player_classes and utility a file for tutorial functions is planned but not implemented.
+
+change log 15 - Emmanuel - April 1
+1. Implemented Full ticket to ride europe map
