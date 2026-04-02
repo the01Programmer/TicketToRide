@@ -239,7 +239,7 @@ class Map:
     def createRouteCard(self, city1, city2, points):
         newCard = RouteCard(city1, city2, points)
         return newCard
-    def draw_track_segments(self, surface, start_pos, end_pos, length, color, track_index=0, total_tracks=1):
+    def draw_track_segments(self, surface, start_pos, end_pos, length, color, track_index=0, total_tracks=1, highlight_color=None, highlight_thickness=6):
         # 1. Calculate the distance and angle between cities
         dx = end_pos[0] - start_pos[0]
         dy = end_pos[1] - start_pos[1]
