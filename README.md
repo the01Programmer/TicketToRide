@@ -72,6 +72,9 @@ change log 13 – Ryder - March 4
 
 change log 14 – Ryder - March 10  
 1. spread out files between (currently) 4 sepreate files main, map_classes, player_classes and utility a file for tutorial functions is planned but not implemented.
+
+change log 15 - Emmanuel - April 1
+1. Implemented Full ticket to ride europe map
 change log 14 – Ryder - March 14
 1. added a basic version of the cpu that can claim ownership of a track so that other developers can start work that relies on that element of the cpu class
 2. the cpu was added to player_classes as i plan for it to inheret from the base player class.
@@ -82,7 +85,7 @@ change log 14 – Ryder - March 15
 2. added new functions to the deck class that the cpu can use
 3. updated the main file to start the cpus turn after the player makes an action
 
-change log 15 - Martina - March 16
+change log 16 - Martina - March 16
 1. edits to map_classes.py file: 
     - edited functions draw_track_segments and drawmap to add a feature that highlights tracks that are owned by the player or the cpu using different colors (yellow for player and red for cpu)
     - added field station to City class
@@ -97,7 +100,7 @@ change log 15 - Martina - March 16
     - added mouse detection for if a player clicks on a city. if they do, they will use their station unless they don't have one.
     - edited running loop so at the end of the game, it gives a player extra points if the station wasn't used 
 
-change log 16 - Martina - March 17
+change log 17 - Martina - March 17
 1. edits to main.py
     - edited game_over code block to make exit screen look better
     - added blank lines after each line printed in message logs to make message log more readable
@@ -114,7 +117,7 @@ change log 16 - Martina - March 17
     - edited buytrack method so that if all tracks have been claimed, player.ending is true (ends game)
     - added new function choose_track_from_list for a pop up that allows the player to select from tracks that they can use with the station they placed down
 
-change log 17 – Ryder - March 18
+change log 18 – Ryder - March 18
     player classes
     - fixed issue where cpu would display a diffrent card from the one it drawed
     - fixed issue where the cpu wouldn't check the correct list when checking its completed routes
@@ -123,16 +126,16 @@ change log 17 – Ryder - March 18
     main
     - added the ability to declair a winner between the user and the cpu but it currently only shows up in the text box and not the main game over screen
 
-change log 18 - Braelyn - March 18
+change log 19 - Braelyn - March 18
 1. created a pop-up quiz to ask the player how many points the track is worth when they buy it
 
-change log 19 - Martina - April 1
+change log 20 - Martina - April 1
 1. Added a button to the screen that says "Hint" (added code to main.py file to display the button)
 2. When the player hits the button "Hint," the message log will display all the shortest paths that the player can take for all the destination cards they have
 3. Added two new functions "shortest_route" and "show_hints" to the utility.py file
 
 
-change log 20 - Ryder - Aprl 1
+change log 21 - Ryder - Aprl 1
 1. created a setplay class that stores a list of lists describing actions that the player and cpu can take
 2. added child classes of the player and enemy classes that store a setplay as a variable and use it to determin their actions. the cpu does whatever is at the top of setplay while the player class restricts its options based on the top value in setplay
 3. modifyed the functions in utility and draw that are responsible for some of the players actions to be restrictable by a setplay instance
