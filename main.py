@@ -4,7 +4,7 @@ import queue
 import time
 import sys
 import player_classes 
-import small_map_classes
+import map_classes
 import utility
 import math
 #import player_classes
@@ -21,7 +21,7 @@ smallfont = pygame.font.SysFont('Corbel',15)
 choice = -1
 cards = player_classes.deck(screen)
 user = player_classes.player(cards)
-map = small_map_classes.Map(cards.routeCards)
+map = map_classes.Map(cards.routeCards)
 cpu = player_classes.enemy(cards)
 map.trackList[0].Owner = cpu
 
