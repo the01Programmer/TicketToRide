@@ -63,7 +63,7 @@ def pointsQuiz(correctPoints):
 class setplay:
     def __init__(self,turns):
         #defalt contrtructer for testing should never be called
-        print("defalt set play constructer called somthing is wrong")
+        print("defalt set play constructer called")
         #action list guide
         # self.actions is a 2d array containing the first element contains the  genral action 
         # and the second is a "specifyer" wich stores more details 
@@ -81,7 +81,7 @@ class setplay:
         # 
         self.sethand = [0,0,0,0,0,0,0,0,0]
         #
-        self.setroutes = []
+        self.empty = False
         
         
         
@@ -94,4 +94,7 @@ class setplay:
     def completeactionE(self):
         if (not self.actions.empty()):
             self.currentE = self.actions.get()
+        else:
+            self.empty = True
+
     

@@ -163,6 +163,7 @@ class deck:
             else:
                 for i in range(restriction[1]):
                     self.drawsesificroute(restriction[i+2], user)
+                user.turns.completeactionE()
             return True
         for i in range(0,5):
             if self.carddrawbuttons[i].collidepoint(pygame.mouse.get_pos()) and (restriction == False or (restriction[0] == 'd' and i == restriction[1][self.drawfirst])):
@@ -512,20 +513,29 @@ class smartenemy(enemy):
             if (do[0] == 'b'):
                 self.smartbuy(tracks, deck, do)
                 self.turns.completeactionE()
+                if self.turns.empty:
+                    self.ending =  True
                 return
             if (do[0] == 'r'):
                 self.smartroute(deck,do)
                 self.turns.completeactionE()
+                if self.turns.empty:
+                    self.ending =  True
                 return
             if (do[0] == 's'):
                 self.smartstation(do)
                 self.turns.completeactionE()
+                if self.turns.empty:
+                    self.ending =  True
                 return
             if (do[0] == 'd'):
                 self.smartdraw(do,deck) 
                 self.turns.completeactionE()
+                if self.turns.empty:
+                    self.ending =  True
                 return
         self.turn(tracks,deck)
+        
     def smartbuy(self, tracks, dis, action):
         
         i = tracks[action[1]]
@@ -569,11 +579,19 @@ class smartenemy(enemy):
     def smartstation(self,action):
         utility.placestation(self, action[1])
         self.addConnection(action[2][0], action[2][1])
+
+    
+        
          
 class setplayer(player):
     def __init__(self, pull,setplay):
         player.__init__(self, pull)
         self.turns = setplay
+
+    def draw(self, screen):
+        player.draw(self,screen)
+        if   self.turns.empty:
+            self.ending =  True
     
     
 

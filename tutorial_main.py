@@ -34,7 +34,10 @@ setupdeck.put(3)
 setupdeck.put(3)
 setupdeck.put(3)
 setupdeck.put(8)
-dumpcards = [8,12,12,6,12,7,12,12,12]
+setupdeck.put(1)
+setupdeck.put(2)
+setupdeck.put(1)
+dumpcards = [8,10,12,6,12,7,12,12,12]
 for i in range(97):
     draw = random.randrange(0,9,1)
     if dumpcards[draw]>0:
@@ -42,9 +45,9 @@ for i in range(97):
         setupdeck.put(draw)
 
 cards = player_classes.deck(screen,setupdeck)
-user = player_classes.setplayer(cards,tutorial.setplay([['b',0],['s','d',['a','d']]]))#player(cards)
-map = map_classes.Map(cards.routeCards)
-cpu = player_classes.smartenemy(cards,tutorial.setplay([['b',3],['d',[1,2]]]))#player_classes.enemy(cards)
+user = player_classes.setplayer(cards,tutorial.setplay([['b',0],['s','D',['A','D']],['d',[1,4]],['r',1,["C","D"]]]))#player(cards)
+map = small_map_classes.Map(cards.routeCards)
+cpu = player_classes.smartenemy(cards,tutorial.setplay([['b',3],['d',[1,2]],['d',[3,4]]]))#player_classes.enemy(cards)
 #map.trackList[0].Owner = cpu
 
 #test codes
@@ -73,7 +76,7 @@ while running:
                     city = utility.findcityundermouse(mousepos, map)
 
                     if track is not None:
-                        success = utility.buytrack(user, track, map.trackList, cards, screen)
+                        success = utility.buytrack(user, track, map.trackList, cards, screen, user.turns.currentE)
                         if success:
                             utility.message_log.add("Track bought!")
                             utility.message_log.add("Your Score: " + str(user.score))
@@ -85,7 +88,7 @@ while running:
                             utility.message_log.add("")
 
                     if city is not None:
-                        success = utility.placestation(user, city)
+                        success = utility.placestation(user, city,user.turns.currentE)
                         if success:
                             utility.message_log.add("Station placed!")
                             utility.message_log.add("")
