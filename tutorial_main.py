@@ -47,7 +47,7 @@ for i in range(97):
 cards = player_classes.deck(screen,setupdeck)
 user = player_classes.setplayer(cards,tutorial.setplay([['b',0],['s','D',['A','D']],['d',[1,4]],['r',1,["C","D"]]]))#player(cards)
 map = small_map_classes.Map(cards.routeCards)
-cpu = player_classes.smartenemy(cards,tutorial.setplay([['b',3],['d',[1,2]],['d',[3,4]]]))#player_classes.enemy(cards)
+cpu = player_classes.smartenemy(cards,tutorial.setplay([['b',3],['d',[1,2]],['d',[3,4]],['d',[3,4]]]))#player_classes.enemy(cards)
 #map.trackList[0].Owner = cpu
 
 #test codes
