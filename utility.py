@@ -274,3 +274,64 @@ def choose_track_from_list(track_list, screen):
             screen.blit(label, (b.x + 12, b.y + 12))
 
         pygame.display.flip()
+
+
+def shortest_route(map_obj, start, end):
+    distances = {}
+    previous = {}
+
+    for city in map_obj.cityList:
+        distances[city] = float("inf")
+    distances[start] = 0
+
+    visited = []
+
+    while len(visited) < len(map_obj.cityList):
+        current = None
+        smallest_distance = float("inf")
+
+        for city in map_obj.cityList:
+            if city not in visited and distances[city] < smallest_distance:
+                smallest_distance = distances[city]
+                current = city
+
+        if current is None:
+            break
+
+        visited.append(current)
+
+        for track in map_obj.get_tracks_touching_city(current):
+            if track.city1 == current:
+                neighbor = track.city2
+            else:
+                neighbor = track.city1
+
+            new_distance = distances[current] + track.length
+
+            if new_distance < distances[neighbor]:
+                distances[neighbor] = new_distance
+                previous[neighbor] = (current, track)
+
+    path = []
+    cur = end
+
+    while cur in previous:
+        prev_city, used_track = previous[cur]
+        path.append(used_track)
+        cur = prev_city
+
+    path.reverse()
+    return path
+
+
+def show_hints(player, map_obj):
+    message_log.add("HINTS:")
+    for r in player.routeCardList:
+        path = shortest_route(map_obj, r.city1, r.city2)
+        if not path:
+            message_log.add(f"{r.city1.name} -> {r.city2.name}: no route")
+        else:
+            s = ", ".join(t.city1.name + "-" + t.city2.name for t in path)
+            total = sum(t.length for t in path)
+            message_log.add(f"• The shortest path for destination card {r.city1.name} to {r.city2.name} is using track(s) {s} with a total use of {total} cars")
+    message_log.add("")

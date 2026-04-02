@@ -34,6 +34,7 @@ del cards.routeCards[0]
 game_over = False
 game_over_processed = False
 exit_button = pygame.Rect(500, 300, 280, 60)
+hint_button = pygame.Rect(1100, 20, 160, 40)
 
 while running:
     # poll for events
@@ -73,6 +74,9 @@ while running:
                             utility.message_log.add("Could not place a station.")
                             utility.message_log.add("")
                         
+                    elif hint_button.collidepoint(mousepos):
+                        utility.show_hints(user, map)
+
                     else:
                         if cards.findpusedbuttons(user,screen):
                             cpu.turn(map.trackList, cards)
@@ -126,6 +130,12 @@ while running:
 
     user.draw(screen) 
     cards.draw(screen)
+
+    pygame.draw.rect(screen, (90, 180, 90), hint_button, border_radius=8)
+    pygame.draw.rect(screen, (0, 0, 0), hint_button, 2, border_radius=8)
+    hint_text = font.render("Hint", True, (0, 0, 0))
+    screen.blit(hint_text, hint_text.get_rect(center=hint_button.center))
+
     utility.message_log.draw(screen)
         
     if game_over:

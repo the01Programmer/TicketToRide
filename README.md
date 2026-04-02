@@ -116,3 +116,8 @@ change log 16 - Martina - March 17
 
 change log 17 - Braelyn - March 18
 1. created a pop-up quiz to ask the player how many points the track is worth when they buy it
+
+change log 18 - Martina - April 1
+1. Added a button to the screen that says "Hint" (added code to main.py file to display the button)
+2. When the player hits the button "Hint," the message log will display all the shortest paths that the player can take for all the destination cards they have
+3. Added two new functions "shortest_route" and "show_hints" to the utility.py file
