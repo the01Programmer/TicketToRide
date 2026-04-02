@@ -8,7 +8,7 @@ import utility; print('Import successful')
 from collections import deque
 
 class deck:
-    def __init__(self, screen):
+    def __init__(self, screen, setdeck = False):
         self.piles = [0,0,0,0,0]
         self.cards = queue.Queue()
         self.graveyard = [12,12,12,12,12,12,12,12,14]
@@ -16,15 +16,21 @@ class deck:
         self.drawfirst = False
         self.routedrawbutton = pygame.Rect(screen.get_width() -250, 100, 230, 40)
         self.carddrawbuttons = []
+        if setdeck == False:
+            self.cards = queue.Queue()
+            self.graveyard = [12,12,12,12,12,12,12,12,14]
+            total = 110
+            while total >0:
+                draw = random.randrange(0,9,1)
+                if self.graveyard[draw]>0:
+                    self.graveyard[draw]-=1
+                    self.cards.put(draw)
+                    total-=1
+        else:
+            self.cards = setdeck
+            self.graveyard = [0,0,0,0,0,0,0,0,0]
         for i in range(0,5):
             self.carddrawbuttons.append(pygame.Rect(30+(120*i),350,100,40))
-        total = 110
-        while total >0:
-            draw = random.randrange(0,9,1)
-            if self.graveyard[draw]>0:
-                self.graveyard[draw]-=1
-                self.cards.put(draw)
-                total-=1
         self.piles[0] = self.get()
         self.piles[1] = self.get()
         self.piles[2] = self.get()
@@ -32,6 +38,8 @@ class deck:
         self.piles[4] = self.get()
         self.routeCards = []
         self.awns = 0
+
+    
 
     def get(self):
         ret = self.cards.get()
@@ -118,6 +126,14 @@ class deck:
         del choice
         return
 
+    def drawsesificroute(self,target, cpu):
+        for i in self.routeCards:
+            if (i.city1.name == target[0] and i.city2.name == target[1]) or (i.city1.name == target[1] and i.city2.name == target[0]):
+                cpu.routeCardList.append(i)
+                self.routeCards.remove(i)
+        return False
+
+
     def cpudrawroutes(self,cpu,amount):
         if len(self.routeCards) < 3:
                 utility.message_log.add("Not enough route cards remaining to draw (need 3).")
@@ -130,25 +146,30 @@ class deck:
             cpu.routeCardList.append(self.routeCards[temp])
             utility.message_log.add(f"cpu drew a route")
 
-    def findpusedbuttons(self,user,screen):
-        if self.routedrawbutton.collidepoint(pygame.mouse.get_pos()):
-            if len(self.routeCards) < 3:
+    def findpusedbuttons(self,user,screen, restriction = False):
+        if self.routedrawbutton.collidepoint(pygame.mouse.get_pos()) and (restriction == False or restriction[0] == 'r'):
+            if len(self.routeCards) < 3 :
                 utility.message_log.add("Not enough route cards remaining to draw (need 3).")
                 utility.message_log.add("")
                 return False
-            exclude = []
-            one = random.randrange(0,len(self.routeCards),1)
-            exclude.append(one)
-            two =  random.choice([i for i in range(len(self.routeCards)) if i not in exclude])
-            exclude.append(two)
-            three = random.choice([i for i in range(len(self.routeCards)) if i not in exclude])
-            self.drawroutes(user,[self.routeCards[one],self.routeCards[two],self.routeCards[three]],screen)
+            if restriction == False:
+                exclude = []
+                one = random.randrange(0,len(self.routeCards),1)
+                exclude.append(one)
+                two =  random.choice([i for i in range(len(self.routeCards)) if i not in exclude])
+                exclude.append(two)
+                three = random.choice([i for i in range(len(self.routeCards)) if i not in exclude])
+                self.drawroutes(user,[self.routeCards[one],self.routeCards[two],self.routeCards[three]],screen)
+            else:
+                for i in range(restriction[1]):
+                    self.drawsesificroute(restriction[i+2], user)
             return True
         for i in range(0,5):
-            if self.carddrawbuttons[i].collidepoint(pygame.mouse.get_pos()):
+            if self.carddrawbuttons[i].collidepoint(pygame.mouse.get_pos()) and (restriction == False or (restriction[0] == 'd' and i == restriction[1][self.drawfirst])):
                 self.todraw[self.drawfirst] = i
                 if self.piles[i] != 8:
                     self.drawfirst = not self.drawfirst
+                    return False
                 else:
                     self.todraw[0] = i
                     self.todraw[1] = 9
@@ -282,7 +303,7 @@ class player:
         screen.blit(traintext, trainrect)
         screen.blit(stationtext, stationrect)
 
-        pass
+        
     def addConnection(self, city_a, city_b):
         if city_a not in self.adjacencyList:
             self.adjacencyList[city_a] = []
@@ -341,7 +362,7 @@ class enemy:
         self.routeCardList = []
         self.ownedTrackList = []
         self.awns = 0
-        pass
+        
 
     def turn(self,tracks,deck):
         routesdone = True 
@@ -439,10 +460,12 @@ class enemy:
 
                 return True
         if self.cars <2:
-            self.ending = true
+            self.ending = True
             
         return False
     
+            
+
     def drawcard(self,deck):
         first = random.randrange(0,4)
         card = deck.piles[first]
@@ -474,6 +497,90 @@ class enemy:
     def drawroute(self,deck):
         drawammount = random.randrange(0,3)
         deck.cpudrawroutes(self,drawammount)
+
+class smartenemy(enemy):
+    def __init__(self, pull, setplay):
+        enemy.__init__(self, pull)
+        self.isplayset = True
+        self.turns = setplay
+ 
+
+    def smartturn(self,tracks,deck):
+        if (self.isplayset):
+            
+            do = self.turns.getactionE()
+            if (do[0] == 'b'):
+                self.smartbuy(tracks, deck, do)
+                self.turns.completeactionE()
+                return
+            if (do[0] == 'r'):
+                self.smartroute(deck,do)
+                self.turns.completeactionE()
+                return
+            if (do[0] == 's'):
+                self.smartstation(do)
+                self.turns.completeactionE()
+                return
+            if (do[0] == 'd'):
+                self.smartdraw(do,deck) 
+                self.turns.completeactionE()
+                return
+        self.turn(tracks,deck)
+    def smartbuy(self, tracks, dis, action):
+        
+        i = tracks[action[1]]
+        if i.Owner is not None:
+            return
+        if self.hand[utility.colortonumber(i.color)] >= i.length and i.Owner is None and self.cars > i.length:
+            i.Owner = self
+            self.ownedTrackList.append(i)
+            self.addConnection(i.city1, i.city2)
+            self.score += utility.scoreforlength(i.length)
+            self.hand[utility.colortonumber(i.color)] -=i.length
+            self.cars -=i.length
+            dis.discard(utility.colortonumber(i.color),i.length)
+            utility.message_log.add(f"CPU bought a track")
+            utility.message_log.add(f"CPU's score: {self.score}")
+            utility.message_log.add("")
+        elif self.hand[utility.colortonumber(i.color)] + self.hand[8] >= i.length and self.cars > i.length and i.Owner is None:
+            i.Owner = self
+            self.ownedTrackList.append(i)
+            self.addConnection(i.city1, i.city2)
+            self.score += utility.scoreforlength(i.length)
+            self.hand[8] -=  i.length - self.hand[utility.colortonumber(i.color)]
+            self.hand[utility.colortonumber(i.color)] = 0
+            self.cars -=i.length
+            dis.discard(utility.colortonumber(i.color),i.length)
+            utility.message_log.add(f"CPU bought a track")
+            utility.message_log.add(f"CPU's score: {self.score}")
+            utility.message_log.add("")
+    def smartroute(self,deck, action):
+        amount = action[1]
+        for i in range(amount):
+            deck.drawsesificroute(action[i+2],self)
+        print("else")
+    def smartdraw(self,action, deck):
+        get = action[1]
+        for i in range(len(get)):
+            card = deck.piles[get[i]]
+            deck.drawfrompile(self,get[i])
+            utility.message_log.add(f"CPU drew {utility.numbertocolor(card)}")
+            utility.message_log.add("")
+    def smartstation(self,action):
+        utility.placestation(self, action[1])
+        self.addConnection(action[2][0], action[2][1])
+         
+class setplayer(player):
+    def __init__(self, pull,setplay):
+        player.__init__(self, pull)
+        self.turns = setplay
+    
+    
+
+
+
+            
+
 
 
 

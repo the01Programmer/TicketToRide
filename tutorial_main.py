@@ -7,6 +7,7 @@ import player_classes
 import small_map_classes
 import utility
 import math
+import tutorial
 #import player_classes
 from collections import deque
 # pygame setup
@@ -19,11 +20,32 @@ font = pygame.font.SysFont('Corbel',35)
 smallfont = pygame.font.SysFont('Corbel',15)
 
 choice = -1
-cards = player_classes.deck(screen)
-user = player_classes.player(cards)
-map = small_map_classes.Map(cards.routeCards)
-cpu = player_classes.enemy(cards)
-map.trackList[0].Owner = cpu
+setupdeck = queue.Queue()
+setupdeck.put(3)
+setupdeck.put(3)
+setupdeck.put(5)
+setupdeck.put(8)
+setupdeck.put(3)
+setupdeck.put(0)
+setupdeck.put(0)
+setupdeck.put(0)
+setupdeck.put(0)
+setupdeck.put(3)
+setupdeck.put(3)
+setupdeck.put(3)
+setupdeck.put(8)
+dumpcards = [8,12,12,6,12,7,12,12,12]
+for i in range(97):
+    draw = random.randrange(0,9,1)
+    if dumpcards[draw]>0:
+        dumpcards[draw]-=1
+        setupdeck.put(draw)
+
+cards = player_classes.deck(screen,setupdeck)
+user = player_classes.setplayer(cards,tutorial.setplay([['b',0],['s','d',['a','d']]]))#player(cards)
+map = map_classes.Map(cards.routeCards)
+cpu = player_classes.smartenemy(cards,tutorial.setplay([['b',3],['d',[1,2]]]))#player_classes.enemy(cards)
+#map.trackList[0].Owner = cpu
 
 #test codes
 user.routeCardList.append(cards.routeCards[0])
@@ -57,30 +79,32 @@ while running:
                             utility.message_log.add("Your Score: " + str(user.score))
                             utility.message_log.add("")
                             user.checkRouteCompletion()
-                            cpu.turn(map.trackList, cards)
+                            cpu.smartturn(map.trackList, cards)
                         else:
                             utility.message_log.add("Could not buy this track.")
                             utility.message_log.add("")
 
                     if city is not None:
-                        success = utility.placestation(user, city, screen)
+                        success = utility.placestation(user, city)
                         if success:
                             utility.message_log.add("Station placed!")
                             utility.message_log.add("")
                             user.checkRouteCompletion()
-                            cpu.turn(map.trackList, cards)
+                            cpu.smartturn(map.trackList, cards)
                         else:
                             utility.message_log.add("Could not place a station.")
                             utility.message_log.add("")
                         
                     else:
-                        if cards.findpusedbuttons(user,screen):
-                            cpu.turn(map.trackList, cards)
+                        if cards.findpusedbuttons(user,screen,user.turns.currentE):
+                            cpu.smartturn(map.trackList, cards)
 
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_SPACE:
-                    cards.drawfrompile(user)
-                    cpu.turn(map.trackList, cards)
+                    if cards.todraw[0] != 9:
+                        cards.drawfrompile(user)
+                        user.turns.completeactionE()
+                        cpu.smartturn(map.trackList, cards)
         else:
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                 if exit_button.collidepoint(pygame.mouse.get_pos()):
@@ -99,16 +123,16 @@ while running:
         # station logic
         used_temp_track = None
         if user.stations < 1: 
-            station_city = next((c for c in map.cityList if c.station), None)
+            station_city = next((c for c in map.cityList if c.station and c.stationowner == user), None)
             if station_city:
                 # get all tracks touching that city, BUT only CPU-owned ones
                 options = [t for t in map.get_tracks_touching_city(station_city) if isinstance(t.Owner, player_classes.enemy)]
                 if options:
-                    chosen = utility.choose_track_from_list(options, screen)
+                    chosen = utility.choose_track_from_list(options, screen, station_city)
                     if chosen:
                         user.addConnection(chosen.city1, chosen.city2)
                         used_temp_track = chosen
-
+        
         # re-check all routes now that station track is applied
         for r in user.routeCardList:
             if not r.completed and user.checkConnection(r.city1, r.city2):
