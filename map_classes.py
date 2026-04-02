@@ -5,12 +5,14 @@ import time
 import sys
 import math
 import utility; print('Import successful')
+from player_classes import player, enemy
 from collections import deque
 from collections import defaultdict
 
 class Track:
     def __init__(self, color, length, wildReq, city1, city2):
         self.Owner = None
+        self.User = None
         self.color = color
         self.length = length
         self.wildReq = wildReq
@@ -22,6 +24,7 @@ class Track:
 class City:
     def __init__(self, name, x, y):
         self.name = name
+        self.station = False
         self.adjacent = [] # use to give the player an adjacency list for detecting connections
         self.position = (x, y)
     def addAdjacent(self, cities):
@@ -266,14 +269,23 @@ class Map:
             center_x = base_center_x + offset_x
             center_y = base_center_y + offset_y
 
-            # 3. Create a surface for the rectangle to rotate it
+            # 4. Rotate
             rect_surf = pygame.Surface((rect_width, rect_height), pygame.SRCALPHA)
             pygame.draw.rect(rect_surf, color, (0, 0, rect_width, rect_height), border_radius=3)
             pygame.draw.rect(rect_surf, (0, 0, 0), (0, 0, rect_width, rect_height), 2, border_radius=3) # Outline
 
-            # 4. Rotate and blit
             rotated_surf = pygame.transform.rotate(rect_surf, -math.degrees(angle))
             rect_center = rotated_surf.get_rect(center=(center_x, center_y))
+
+            # 5. highlight if applicable
+            if highlight_color:
+                glow_surf = pygame.Surface((rect_width + highlight_thickness, rect_height + highlight_thickness), pygame.SRCALPHA)
+                pygame.draw.rect(glow_surf, highlight_color, (0, 0, rect_width + highlight_thickness, rect_height + highlight_thickness), border_radius=5)
+                rotated_glow = pygame.transform.rotate(glow_surf, -math.degrees(angle))
+                glow_rect = rotated_glow.get_rect(center=(center_x, center_y))
+                surface.blit(rotated_glow, glow_rect)
+
+            # 6. blit
             surface.blit(rotated_surf, rect_center)
     def drawMap(self, surface):
         # 1. Group tracks by their city connections
@@ -303,6 +315,10 @@ class Map:
             text_surf = utility.smallfont.render(c.name, True, (0, 0, 0))
             text_rect = text_surf.get_rect(center=(c.position[0], c.position[1] - 25))
             surface.blit(text_surf, text_rect)
+    
+    def get_tracks_touching_city(self, city):
+        return [t for t in self.trackList if t.city1 == city or t.city2 == city]
+
 
 class RouteCard:
     def __init__(self, city1, city2, points):
