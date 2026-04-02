@@ -61,8 +61,8 @@ class Map:
 
         # --- 3. Southern Europe & Mediterranean ---
         madrid = City("Madrid", 140, 490)
-        lisboa = City("Lisboa", 110, 550)
-        cadiz = City("Cadiz", 140, 610)
+        lisboa = City("Lisboa", 70, 550)
+        cadiz = City("Cadiz", 100, 610)
         barcelona = City("Barcelona", 220, 530)
         pamplona = City("Pamplona", 190, 430)
         marseille = City("Marseille", 350, 470)
@@ -78,8 +78,8 @@ class Map:
         moskva = City("Moskva", 980, 170)
         smolensk = City("Smolensk", 920, 210)
         kyiv = City("Kyiv", 800, 250)
-        kharkov = City("Kharkov", 980, 300)
-        rostov = City("Rostov", 980, 400)
+        kharkov = City("Kharkov", 950, 300)
+        rostov = City("Rostov", 980, 370)
         sochi = City("Sochi", 1000, 460)
         sevastopol = City("Sevastopol", 900, 410)
         bucuresti = City("Bucuresti", 760, 370)
