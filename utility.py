@@ -167,7 +167,7 @@ def findcityundermouse(mousepos, map, hitradius=18):
 
     return None
 
-def buytrack(player, track, tracks, deck, screen):
+def buytrack(player, track, tracks, deck, screen, restriction = False):
     # 1. Make sure track is not already claimed
     if track.Owner is not None:
         message_log.add("Track already claimed.")
@@ -176,6 +176,10 @@ def buytrack(player, track, tracks, deck, screen):
     # 2. Try to spend cards equal to the track length
     # track.color must be a number 0–8 
     numofcolor = colortonumber(track.color)
+
+    #check if we can buy this track based on the restriction
+    if restriction != False and not restriction[1] == tracks.index(track):
+        return False
     
     success = player.spend(numofcolor, track.length, deck, screen)
     if not success:
@@ -194,9 +198,11 @@ def buytrack(player, track, tracks, deck, screen):
     if all(t.Owner is not None for t in tracks):
         player.ending = True
 
+    if restriction != False:
+        player.turns.completeactionE()
     return True
 
-def placestation(player, city, screen):
+def placestation(player, city, restriction = False):
     if city.station == True:
         return False
     
@@ -206,10 +212,17 @@ def placestation(player, city, screen):
     if player.cars < 1:
         return False
 
+    if restriction != False and restriction[1] != city.name:
+        return False
+    
     city.station = True
+    city.stationowner = player
     player.stations -= 1
     player.cars -= 1
 
+    if restriction != False:
+        city.restrictedconnection = restriction[2]
+        player.turns.completeactionE()
     return True
 
 class Choicemenu:
@@ -232,7 +245,7 @@ class Choicemenu:
             screen.blit(text,(50+(120*i),500))
             screen.blit(self.text,(50,450))
 
-def choose_track_from_list(track_list, screen):
+def choose_track_from_list(track_list, screen, city):
     background = screen.copy()
 
     menu_rect = pygame.Rect(0, 0, 700, 300)
@@ -252,7 +265,9 @@ def choose_track_from_list(track_list, screen):
                 return None
             if event.type == pygame.MOUSEBUTTONDOWN:
                 for i, b in enumerate(buttons):
-                    if b.collidepoint(pygame.mouse.get_pos()):
+                    if b.collidepoint(pygame.mouse.get_pos()) and city.restrictedconnection == False :
+                        return track_list[i]
+                    elif city.restrictedconnection[0] == track_list[i].city1.name and city.restrictedconnection[1] == track_list[i].city2.name:
                         return track_list[i]
 
         screen.blit(background, (0, 0))

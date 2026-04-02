@@ -1,5 +1,5 @@
 import pygame
-
+import queue
 clock = pygame.time.Clock()
 
 def pointsQuiz(correctPoints):
@@ -58,3 +58,43 @@ def pointsQuiz(correctPoints):
 
         pygame.display.flip()
         clock.tick(30)
+
+
+class setplay:
+    def __init__(self,turns):
+        #defalt contrtructer for testing should never be called
+        print("defalt set play constructer called")
+        #action list guide
+        # self.actions is a 2d array containing the first element contains the  genral action 
+        # and the second is a "specifyer" wich stores more details 
+        # say the genral action is buy track the specifyer will tell the cpu which one 
+        self.actions = queue.Queue()
+        for i in range(len(turns)):
+            self.actions.put(turns[i])  
+
+        #self.actions.put(['r',1,["C","D"]])
+        #self.actions.put(['b',0])
+        #self.actions.put(['d',[1,2]])
+        
+        
+        self.currentE = self.actions.get()
+        # 
+        self.sethand = [0,0,0,0,0,0,0,0,0]
+        #
+        self.empty = False
+        
+        
+        
+
+
+
+    def getactionE(self):
+        return self.currentE
+    
+    def completeactionE(self):
+        if (not self.actions.empty()):
+            self.currentE = self.actions.get()
+        else:
+            self.empty = True
+
+    

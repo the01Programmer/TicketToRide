@@ -114,10 +114,31 @@ change log 16 - Martina - March 17
     - edited buytrack method so that if all tracks have been claimed, player.ending is true (ends game)
     - added new function choose_track_from_list for a pop up that allows the player to select from tracks that they can use with the station they placed down
 
-change log 17 - Braelyn - March 18
+change log 17 – Ryder - March 18
+    player classes
+    - fixed issue where cpu would display a diffrent card from the one it drawed
+    - fixed issue where the cpu wouldn't check the correct list when checking its completed routes
+    - finished the decks cpudrawroutes as the cpus route check was disabled so i didn't see the problem
+    - made the buy function able to use wild cards structured so that we could rework it to use logic to decide to use them
+    main
+    - added the ability to declair a winner between the user and the cpu but it currently only shows up in the text box and not the main game over screen
+
+change log 18 - Braelyn - March 18
 1. created a pop-up quiz to ask the player how many points the track is worth when they buy it
 
-change log 18 - Martina - April 1
+change log 19 - Martina - April 1
 1. Added a button to the screen that says "Hint" (added code to main.py file to display the button)
 2. When the player hits the button "Hint," the message log will display all the shortest paths that the player can take for all the destination cards they have
 3. Added two new functions "shortest_route" and "show_hints" to the utility.py file
+
+
+change log 20 - Ryder - Aprl 1
+1. created a setplay class that stores a list of lists describing actions that the player and cpu can take
+2. added child classes of the player and enemy classes that store a setplay as a variable and use it to determin their actions. the cpu does whatever is at the top of setplay while the player class restricts its options based on the top value in setplay
+3. modifyed the functions in utility and draw that are responsible for some of the players actions to be restrictable by a setplay instance
+4. updated deck to take a given queue and set that as it's deck value. it will shuffel its deck normaly if not given one 
+5. created a new tutorial_main and small_map_classes file in preperation for making this setplay system a choseable mode 
+tutorial_main holds a copy of main that uses the set play classes. it it set up to run the user through all avaliable actions as an introduction to the program's controles and the game
+small_map_classes hold the smaller map so that tutorial_main can use a smaller map since that would make it easyyer
+
+it would likely be a good idea to add messages to this main file in the future
