@@ -129,8 +129,9 @@ change log 18 - Braelyn - March 18
 change log 19 - Ryder - Aprl 1
 1. created a setplay class that stores a list of lists describing actions that the player and cpu can take
 2. added child classes of the player and enemy classes that store a setplay as a variable and use it to determin their actions. the cpu does whatever is at the top of setplay while the player class restricts its options based on the top value in setplay
-3. modifyed the functions in utility and draw that are responsible for some of the players actions to be restrictable by a setplay instance 
-4. created a new tutorial_main and small_map_classes file in preperation for making this setplay system a choseable mode 
+3. modifyed the functions in utility and draw that are responsible for some of the players actions to be restrictable by a setplay instance
+4. updated deck to take a given queue and set that as it's deck value. it will shuffel its deck normaly if not given one 
+5. created a new tutorial_main and small_map_classes file in preperation for making this setplay system a choseable mode 
 tutorial_main holds a copy of main that uses the set play classes. it it set up to run the user through all avaliable actions as an introduction to the program's controles and the game
 small_map_classes hold the smaller map so that tutorial_main can use a smaller map since that would make it easyyer
 
