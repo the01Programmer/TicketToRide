@@ -30,7 +30,7 @@ class deck:
             self.cards = setdeck
             self.graveyard = [0,0,0,0,0,0,0,0,0]
         for i in range(0,5):
-            self.carddrawbuttons.append(pygame.Rect(30+(120*i),350,100,40))
+            self.carddrawbuttons.append(pygame.Rect(30+(120*i),650,100,40))
         self.piles[0] = self.get()
         self.piles[1] = self.get()
         self.piles[2] = self.get()
@@ -133,7 +133,6 @@ class deck:
                 self.routeCards.remove(i)
         return False
 
-
     def cpudrawroutes(self,cpu,amount):
         if len(self.routeCards) < 3:
                 utility.message_log.add("Not enough route cards remaining to draw (need 3).")
@@ -164,8 +163,10 @@ class deck:
                 for i in range(restriction[1]):
                     self.drawsesificroute(restriction[i+2], user)
                 user.turns.completeactionE()
+                utility.message_log.add(user.turns.describeaction())
             return True
         for i in range(0,5):
+            print(pygame.mouse.get_pos())
             if self.carddrawbuttons[i].collidepoint(pygame.mouse.get_pos()) and (restriction == False or (restriction[0] == 'd' and i == restriction[1][self.drawfirst])):
                 self.todraw[self.drawfirst] = i
                 if self.piles[i] != 8:
@@ -584,9 +585,11 @@ class smartenemy(enemy):
         
          
 class setplayer(player):
-    def __init__(self, pull,setplay):
+    def __init__(self, pull,setplay, turns):
         player.__init__(self, pull)
         self.turns = setplay
+
+        utility.message_log.add(self.turns.describeaction(turns))
 
     def draw(self, screen):
         player.draw(self,screen)

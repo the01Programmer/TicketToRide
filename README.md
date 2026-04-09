@@ -142,3 +142,10 @@ tutorial_main holds a copy of main that uses the set play classes. it it set up 
 small_map_classes hold the smaller map so that tutorial_main can use a smaller map since that would make it easyyer
 
 it would likely be a good idea to add messages to this main file in the future
+
+change log 21 - ryder aprl 9
+1. added a describemove function to the setplay class which outputs a string that tells the user the move they need to do 
+
+2. updated every function that can take a setplay object to check if the player can make the move they represent to call describemove after updating the set turn.
+
+3. added a line to setplayer's creation function to call describemove.

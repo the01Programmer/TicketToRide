@@ -45,8 +45,8 @@ for i in range(97):
         setupdeck.put(draw)
 
 cards = player_classes.deck(screen,setupdeck)
-user = player_classes.setplayer(cards,tutorial.setplay([['b',0],['s','D',['A','D']],['d',[1,4]],['r',1,["C","D"]]]))#player(cards)
 map = small_map_classes.Map(cards.routeCards)
+user = player_classes.setplayer(cards,tutorial.setplay([['b',0],['s','D',['A','D']],['d',[1,4]],['r',1,["C","D"]]]), map.trackList)#player(cards)
 cpu = player_classes.smartenemy(cards,tutorial.setplay([['b',3],['d',[1,2]],['d',[3,4]],['d',[3,4]]]))#player_classes.enemy(cards)
 #map.trackList[0].Owner = cpu
 
@@ -83,6 +83,7 @@ while running:
                             utility.message_log.add("")
                             user.checkRouteCompletion()
                             cpu.smartturn(map.trackList, cards)
+                            utility.message_log.add(user.turns.describeaction(map.trackList))
                         else:
                             utility.message_log.add("Could not buy this track.")
                             utility.message_log.add("")
@@ -94,6 +95,7 @@ while running:
                             utility.message_log.add("")
                             user.checkRouteCompletion()
                             cpu.smartturn(map.trackList, cards)
+                            utility.message_log.add(user.turns.describeaction())
                         else:
                             utility.message_log.add("Could not place a station.")
                             utility.message_log.add("")
@@ -107,6 +109,7 @@ while running:
                     if cards.todraw[0] != 9:
                         cards.drawfrompile(user)
                         user.turns.completeactionE()
+                        utility.message_log.add(user.turns.describeaction())
                         cpu.smartturn(map.trackList, cards)
         else:
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:

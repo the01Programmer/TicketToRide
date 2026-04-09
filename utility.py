@@ -94,7 +94,6 @@ def scoreforlength(n):
     if n == 6:
         return 15
 
-
 def pointtosegmentdistance(px, py, ax, ay, bx, by):
     # distance from point px,py to a line
 
@@ -127,8 +126,6 @@ def pointtosegmentdistance(px, py, ax, ay, bx, by):
     dy = py - cy
 
     return math.hypot(dx, dy)
-
-
 
 def findtrackundermouse(mousepos, map, hitradius=14):
     # mouse_pos is (mx, my)
@@ -200,6 +197,7 @@ def buytrack(player, track, tracks, deck, screen, restriction = False):
 
     if restriction != False:
         player.turns.completeactionE()
+        #message_log.add(player.turns.describeaction(tracks))
     return True
 
 def placestation(player, city, restriction = False):
@@ -223,6 +221,7 @@ def placestation(player, city, restriction = False):
     if restriction != False:
         city.restrictedconnection = restriction[2]
         player.turns.completeactionE()
+        message_log.add(player.turns.describeaction())
     return True
 
 class Choicemenu:
@@ -290,7 +289,6 @@ def choose_track_from_list(track_list, screen, city):
 
         pygame.display.flip()
 
-
 def shortest_route(map_obj, start, end):
     distances = {}
     previous = {}
@@ -337,7 +335,6 @@ def shortest_route(map_obj, start, end):
 
     path.reverse()
     return path
-
 
 def show_hints(player, map_obj):
     message_log.add("HINTS:")
