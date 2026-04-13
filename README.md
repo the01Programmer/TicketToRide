@@ -156,3 +156,18 @@ change log 22 - emmanuel aprl 12
 2. Added Supporting texts and adjusted positions and fonts for better clarity and readability
 
 3. Added background rectangle for choice box
+
+change log 23 - Martina - April 12
+1. edited the show_hints function so it creates a window to display all hints instead of in messagelog (utility.py)
+
+2. added 2 helper functions get_hint_lines and wrap_text for show_hints function (utility.py)
+
+3. added a function longest_route_length to check the longest continous path that the user being passed to the function has
+
+4. added a section when the game ends to check who had the longest route (calls longest_route_length) and based on that, adds 10 points to either the cpu or player's score (main.py)
+
+5. added function show_rules to display rules of Ticket to Ride game in a seperate window (utility.py)
+
+6. added a "Rules" button that if pressed by the users, calls the show_rules function (main.py)
+
+7. fixed bug that was not allowing a station to be placed by the player (main.py)

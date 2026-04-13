@@ -340,14 +340,180 @@ def shortest_route(map_obj, start, end):
     path.reverse()
     return path
 
-def show_hints(player, map_obj):
-    message_log.add("HINTS:")
+
+def get_hint_lines(player, map_obj):
+    lines = []
+
     for r in player.routeCardList:
         path = shortest_route(map_obj, r.city1, r.city2)
         if not path:
-            message_log.add(f"{r.city1.name} -> {r.city2.name}: no route")
+            lines.append(f"{r.city1.name} -> {r.city2.name}: no route")
         else:
             s = ", ".join(t.city1.name + "-" + t.city2.name for t in path)
             total = sum(t.length for t in path)
-            message_log.add(f"• The shortest path for destination card {r.city1.name} to {r.city2.name} is using track(s) {s} with a total use of {total} cars")
-    message_log.add("")
+            lines.append(f"• The shortest path for destination card {r.city1.name} to {r.city2.name} is using track(s) {s} with a total use of {total} cars")
+
+    return lines
+
+
+def show_hints(player, map_obj, screen, clock):
+    font = pygame.font.Font(None, 26)
+    title_font = pygame.font.Font(None, 36)
+
+    lines = get_hint_lines(player, map_obj)
+
+    window_rect = pygame.Rect(200, 100, 880, 520)
+    border_rect = window_rect.inflate(4, 4)
+
+    running = True
+    while running:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                running = False
+
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_ESCAPE:
+                    running = False 
+
+        overlay = pygame.Surface(screen.get_size(), pygame.SRCALPHA)
+        overlay.fill((0, 0, 0, 180))
+        screen.blit(overlay, (0, 0))
+
+        pygame.draw.rect(screen, (200, 200, 200), border_rect)
+        pygame.draw.rect(screen, (40, 40, 40), window_rect)
+
+        title_surf = title_font.render("Hints", True, (255, 255, 255))
+        screen.blit(title_surf, (window_rect.x + 20, window_rect.y + 15))
+
+        y = window_rect.y + 70
+
+        text_width = window_rect.width - 40
+
+        for line in lines:
+            wrapped = wrap_text(line, font, text_width)
+            for wline in wrapped:
+                text_surf = font.render(wline, True, (220, 220, 220))
+                screen.blit(text_surf, (window_rect.x + 20, y))
+                y += 26
+
+        footer = font.render("Press ESC to close", True, (180, 180, 180))
+        screen.blit(
+            footer,
+            (window_rect.right - footer.get_width() - 20,
+             window_rect.bottom - 35)
+        )
+
+        pygame.display.flip()
+        clock.tick(30)
+
+
+def wrap_text(text, font, max_width):
+    words = text.split(" ")
+    lines = []
+    current_line = ""
+
+    for word in words:
+        test_line = current_line + word + " "
+        if font.size(test_line)[0] <= max_width:
+            current_line = test_line
+        else:
+            lines.append(current_line)
+            current_line = word + " "
+
+    if current_line:
+        lines.append(current_line)
+
+    return lines
+
+
+def longest_route_length(player):
+    edges = []
+    for t in player.ownedTrackList:
+        edges.append((t.city1, t.city2, t.length))
+
+    adj = {}
+    for i, (a, b, l) in enumerate(edges):
+        adj.setdefault(a, []).append((b, l, i))
+        adj.setdefault(b, []).append((a, l, i))
+
+    best = 0
+
+    def dfs(city, used_edges, total):
+        nonlocal best
+        best = max(best, total)
+        for (nxt, length, eid) in adj.get(city, []):
+            if eid not in used_edges:
+                used_edges.add(eid)
+                dfs(nxt, used_edges, total + length)
+                used_edges.remove(eid)
+
+    for city in adj:
+        dfs(city, set(), 0)
+
+    return best
+
+
+
+def show_rules(screen, clock):
+
+    font = pygame.font.Font(None, 26)
+
+    rules = [
+        "Scroll with mouse wheel",
+        "Press ESC to close",
+        "",
+        "Ticket to Ride - Rules (Summary)",
+        "",
+        "• On your turn, do ONE action:",
+        "  - Claim a route",
+        "  - Draw 2 train cards (or one wild grey card)",
+        "  - Draw route cards",
+        "",
+        "• To claim a route:",
+        "  - Spend cards matching the route color",
+        "  - Place trains and score points",
+        "",
+        "• Route cards give points if completed,",
+        "  but LOSE points if unfinished at the end.",
+        "",
+        "• When a player has 2 or fewer trains, or there are no more tracks to claim",
+        "  the game enters the final phase.",
+        "",
+        "• Longest continuous route grants 10 bonus points.",
+        "",
+
+    ]
+
+    window = pygame.Rect(160, 60, 960, 600)
+    line_height = 28
+    scroll_y = 0
+    max_scroll = max(0, len(rules) * line_height - (window.height - 40))
+
+    running = True
+    while running:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                return
+            if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
+                running = False
+            if event.type == pygame.MOUSEWHEEL:
+                scroll_y -= event.y * 20
+                scroll_y = max(0, min(scroll_y, max_scroll))
+
+        overlay = pygame.Surface(screen.get_size(), pygame.SRCALPHA)
+        overlay.fill((0, 0, 0, 180))
+        screen.blit(overlay, (0, 0))
+
+        pygame.draw.rect(screen, (230, 230, 230), window, border_radius=12)
+        pygame.draw.rect(screen, (20, 20, 20), window, 3, border_radius=12)
+
+        y = window.y + 20 - scroll_y
+        for line in rules:
+            surf = font.render(line, True, (0, 0, 0))
+            screen.blit(surf, (window.x + 30, y))
+            y += line_height
+
+        pygame.display.flip()
+        clock.tick(30)
+
+

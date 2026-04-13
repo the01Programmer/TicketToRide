@@ -21,6 +21,7 @@ def pointsQuiz(correctPoints):
     text_surface = font.render('How many points did you earn?', True, (255, 255, 255))
 
     isRunning = True
+    
     while isRunning:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:

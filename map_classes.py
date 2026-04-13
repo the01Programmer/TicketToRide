@@ -321,6 +321,10 @@ class Map:
         for c in self.cityList:
             pygame.draw.circle(surface, (50, 50, 50), c.position, 12) 
             pygame.draw.circle(surface, (255, 215, 0), c.position, 9)
+            
+            if c.station:
+                pygame.draw.circle(surface, (255, 255, 150), c.position, 16, 3)
+
             text_surf = utility.smallfontBold.render(c.name, True, (255, 255, 255))
             text_rect = text_surf.get_rect(midright=(c.position[0] - 0 + 2, c.position[1] - 20 + 2))
             surface.blit(text_surf, text_rect)

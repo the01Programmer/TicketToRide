@@ -143,7 +143,7 @@ class deck:
             temp = (random.choice([f for f in range(len(self.routeCards)) if i not in exclude]))
             exclude.append(temp)
             cpu.routeCardList.append(self.routeCards[temp])
-            utility.message_log.add(f"cpu drew a route")
+            utility.message_log.add(f"CPU drew a route")
 
     def findpusedbuttons(self,user,screen, restriction = False):
         if self.routedrawbutton.collidepoint(pygame.mouse.get_pos()) and (restriction == False or restriction[0] == 'r'):
