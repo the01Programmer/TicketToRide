@@ -40,59 +40,59 @@ class Map:
         cityList = []
         #set up default tracks manually
         # --- 1. Northern & Western Europe ---
-        edinburgh = City("Edinburgh", 200, 100)
-        london = City("London", 200, 210)
-        dieppe = City("Dieppe", 210, 290)
-        brest = City("Brest", 130, 330)
-        paris = City("Paris", 270, 310)
-        bruxelles = City("Bruxelles", 310, 230)
-        amsterdam = City("Amsterdam", 280, 190)
-        essen = City("Essen", 400, 180)
-        frankfurt = City("Frankfurt", 400, 250)
-        berlin = City("Berlin", 520, 170)
-        danzig = City("Danzig", 650, 130)
-        copenhagen = City("Kobenhavn", 480, 100)
-        stockholm = City("Stockholm", 600, 50)
+        edinburgh = City("Edinburgh", 200, 120)
+        london = City("London", 230, 220)
+        dieppe = City("Dieppe", 240, 290)
+        brest = City("Brest", 170, 330)
+        paris = City("Paris", 300, 310)
+        bruxelles = City("Bruxelles", 330, 240)
+        amsterdam = City("Amsterdam", 310, 200)
+        essen = City("Essen", 410, 200)
+        frankfurt = City("Frankfurt", 410, 260)
+        berlin = City("Berlin", 520, 190)
+        danzig = City("Danzig", 640, 150)
+        copenhagen = City("Kobenhavn", 490, 120)
+        stockholm = City("Stockholm", 590, 70)
 
         # --- 2. Central Europe ---
-        munchen = City("Munchen", 480, 300)
-        zurich = City("Zurich", 390, 350)
-        wien = City("Wien", 600, 300)
-        warszawa = City("Warszawa", 670, 180)
-        wilno = City("Wilno", 770, 170)
-        budapest = City("Budapest", 650, 340)
+        munchen = City("Munchen", 490, 300)
+        zurich = City("Zurich", 410, 350)
+        wien = City("Wien", 590, 300)
+        warszawa = City("Warszawa", 660, 200)
+        wilno = City("Wilno", 750, 190)
+        budapest = City("Budapest", 640, 340)
 
         # --- 3. Southern Europe & Mediterranean ---
-        madrid = City("Madrid", 140, 490)
-        lisboa = City("Lisboa", 70, 550)
-        cadiz = City("Cadiz", 100, 610)
-        barcelona = City("Barcelona", 220, 530)
-        pamplona = City("Pamplona", 190, 430)
-        marseille = City("Marseille", 350, 470)
-        venezia = City("Venezia", 470, 400)
-        roma = City("Roma", 480, 500)
-        brindisi = City("Brindisi", 580, 530)
-        palermo = City("Palermo", 520, 610)
-        athens = City("Athina", 720, 550)
+        madrid = City("Madrid", 180, 470)
+        lisboa = City("Lisboa", 80, 520)
+        cadiz = City("Cadiz", 140, 580)
+        barcelona = City("Barcelona", 250, 510)
+        pamplona = City("Pamplona", 230, 420)
+        marseille = City("Marseille", 370, 460)
+        venezia = City("Venezia", 480, 390)
+        roma = City("Roma", 490, 480)
+        brindisi = City("Brindisi", 580, 510)
+        palermo = City("Palermo", 520, 580)
+        athens = City("Athina", 700, 530)
 
         # --- 4. Eastern Europe & Balkans ---
-        petrograd = City("Petrograd", 960, 80)
-        riga = City("Riga", 750, 90)
-        moskva = City("Moskva", 980, 170)
-        smolensk = City("Smolensk", 920, 210)
-        kyiv = City("Kyiv", 800, 250)
-        kharkov = City("Kharkov", 950, 300)
-        rostov = City("Rostov", 980, 370)
-        sochi = City("Sochi", 1000, 460)
-        sevastopol = City("Sevastopol", 900, 410)
-        bucuresti = City("Bucuresti", 760, 370)
-        sofia = City("Sofia", 760, 480)
-        sarajevo = City("Sarajevo", 650, 450)
-        zagrab = City("Zagrab", 550, 390)
-        constantinople = City("Constantinople", 850, 500)
-        angora = City("Angora", 880, 580)
-        erzurum = City("Erzurum", 1020, 550)
-        smyrna = City("Smyrna", 780, 610)
+        petrograd = City("Petrograd", 880, 70)
+        riga = City("Riga", 730, 110)
+        moskva = City("Moskva", 940, 190)
+        smolensk = City("Smolensk", 880, 220)
+        kyiv = City("Kyiv", 770, 260)
+        kharkov = City("Kharkov", 910, 300)
+        rostov = City("Rostov", 940, 370)
+        sochi = City("Sochi", 950, 450)
+        sevastopol = City("Sevastopol", 860, 400)
+        bucuresti = City("Bucuresti", 740, 370)
+        sofia = City("Sofia", 740, 470)
+        sarajevo = City("Sarajevo", 640, 440)
+        zagrab = City("Zagrab", 550, 380)
+        constantinople = City("Constantinople", 820, 480)
+        angora = City("Angora", 850, 560)
+        erzurum = City("Erzurum", 970, 530)
+        smyrna = City("Smyrna", 760, 580)
 
         cityList.extend([
             edinburgh, london, dieppe, brest, paris, bruxelles, amsterdam, essen, frankfurt, berlin, danzig,
@@ -239,7 +239,7 @@ class Map:
     def createRouteCard(self, city1, city2, points):
         newCard = RouteCard(city1, city2, points)
         return newCard
-    def draw_track_segments(self, surface, start_pos, end_pos, length, color, track_index=0, total_tracks=1, highlight_color=None, highlight_thickness=6):
+    def draw_track_segments(self, surface, start_pos, end_pos, length, color, track_index=0, total_tracks=1, highlight_color=None, highlight_thickness=8):
         # 1. Calculate the distance and angle between cities
         dx = end_pos[0] - start_pos[0]
         dy = end_pos[1] - start_pos[1]
@@ -301,20 +301,33 @@ class Map:
                 start = t.city1.position
                 end = t.city2.position
                 color = utility.TRACK_COLORS.get(t.color)
+
+                highlight = None
+
+                if isinstance(t.Owner, player):
+                    highlight = (255, 255, 150, 180)
+
+                elif isinstance(t.Owner, enemy):
+                    highlight = (255, 80, 80, 180)
                 
                 # Pass the index and total count to your updated draw_track_segments
                 self.draw_track_segments(
                     surface, start, end, t.length, color, 
                     track_index=index, 
-                    total_tracks=total_tracks
+                    total_tracks=total_tracks,
+                    highlight_color=highlight
                 )
         
         for c in self.cityList:
             pygame.draw.circle(surface, (50, 50, 50), c.position, 12) 
             pygame.draw.circle(surface, (255, 215, 0), c.position, 9)
-            text_surf = utility.smallfont.render(c.name, True, (0, 0, 0))
-            text_rect = text_surf.get_rect(center=(c.position[0], c.position[1] - 25))
+            text_surf = utility.smallfontBold.render(c.name, True, (255, 255, 255))
+            text_rect = text_surf.get_rect(midright=(c.position[0] - 0 + 2, c.position[1] - 20 + 2))
             surface.blit(text_surf, text_rect)
+            text_surf = utility.smallfontBold.render(c.name, True, (0, 0, 0))
+            text_rect = text_surf.get_rect(midright=(c.position[0] - 0, c.position[1] - 20))
+            surface.blit(text_surf, text_rect)
+            
     
     def get_tracks_touching_city(self, city):
         return [t for t in self.trackList if t.city1 == city or t.city2 == city]
@@ -326,10 +339,22 @@ class RouteCard:
         self.city2 = city2
         self.points = points
         self.completed = False
-    def drawRouteCard(self, surface,x,y):
-        if self.completed:
-            text_surf = utility.font.render(self.city1.name + " to " + self.city2.name + " Points: " + str(self.points) + " Completed", True, (0, 0, 0))
-        else:
-            text_surf = utility.font.render(self.city1.name + " to " + self.city2.name + " Points: " + str(self.points), True, (0, 0, 0))
-        text_rect = text_surf.get_rect(midright=(surface.get_width() - 20, y))
-        surface.blit(text_surf, text_rect)
+    def drawRouteCard(self, surface, x, y):
+        # Line 1: City Names
+        city_text = f"{self.city1.name} to {self.city2.name}"
+        city_surf = utility.mediumFontBold.render(city_text, True, (0, 0, 0))
+        
+        # Line 2: Points and Status
+        status = " (Completed)" if self.completed else ""
+        points_text = f"Points: {self.points}{status}"
+        points_surf = utility.mediumFont.render(points_text, True, (0, 0, 0))
+
+        # Position Line 1 slightly above the original center 'y'
+        city_rect = city_surf.get_rect(midright=(surface.get_width() - 20, y - 12))
+        
+        # Position Line 2 slightly below the original center 'y'
+        points_rect = points_surf.get_rect(midright=(surface.get_width() - 20, y + 12))
+
+        # Draw both lines
+        surface.blit(city_surf, city_rect)
+        surface.blit(points_surf, points_rect)

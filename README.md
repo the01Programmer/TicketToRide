@@ -149,3 +149,10 @@ change log 21 - ryder aprl 9
 2. updated every function that can take a setplay object to check if the player can make the move they represent to call describemove after updating the set turn.
 
 3. added a line to setplayer's creation function to call describemove.
+
+change log 22 - emmanuel aprl 12
+1. Implemented Highlights on the expanded map & adjusting the font for better readability
+
+2. Added Supporting texts and adjusted positions and fonts for better clarity and readability
+
+3. Added background rectangle for choice box

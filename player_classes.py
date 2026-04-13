@@ -30,7 +30,7 @@ class deck:
             self.cards = setdeck
             self.graveyard = [0,0,0,0,0,0,0,0,0]
         for i in range(0,5):
-            self.carddrawbuttons.append(pygame.Rect(30+(120*i),650,100,40))
+            self.carddrawbuttons.append(pygame.Rect(300+(120*i),650,100,40))
         self.piles[0] = self.get()
         self.piles[1] = self.get()
         self.piles[2] = self.get()
@@ -211,18 +211,20 @@ class deck:
         pygame.draw.rect(screen,utility.TRACK_COLORS.get("red"),self.routedrawbutton, border_radius=3)
         text = utility.font.render('Draw new route' , True , (0,0,0))
         screen.blit(text, text.get_rect(center=self.routedrawbutton.center))
+        text = utility.mediumFontBold.render('Draw Pile: (Press Space To Confirm)' , True , (0,0,0))
+        screen.blit(text, text.get_rect(center=(600, 620)))
         for i in range(0,5):
-            pygame.draw.rect(screen,utility.TRACK_COLORS.get(utility.numbertocolor(self.piles[i])),[30+(120*i),650,100,40], border_radius=3)
+            pygame.draw.rect(screen,utility.TRACK_COLORS.get(utility.numbertocolor(self.piles[i])),[300+(120*i),650,100,40], border_radius=3)
             if i == self.todraw[0] or i == self.todraw[1]:
                 if self.piles[i] == 4:
-                    pygame.draw.rect(screen,(255,255,255),[30+(120*i),650,100,40], 2,border_radius=3)
+                    pygame.draw.rect(screen,(255,255,255),[300+(120*i),650,100,40], 2,border_radius=3)
                 else:
-                    pygame.draw.rect(screen,(0,0,0),[30+(120*i),650,100,40], 2,border_radius=3)
+                    pygame.draw.rect(screen,(0,0,0),[300+(120*i),650,100,40], 2,border_radius=3)
             if self.piles[i] == 4:
                 text = utility.font.render(f'{i+1}' , True , (255,255,255))
             else:
                 text = utility.font.render(f'{i+1}' , True , (0,0,0))
-            screen.blit(text, text.get_rect(center=(30+(120*i)+50, 650+20)))
+            screen.blit(text, text.get_rect(center=(300+(120*i)+50, 650+20)))
 
 class player:
 
@@ -286,16 +288,21 @@ class player:
     def draw(self, screen):
         if self.cars <=2:
             self.ending = True
+        text = utility.mediumFontBold.render('Your Cards:' , True , (0,0,0))
+        screen.blit(text, text.get_rect(center=(100, 20)))
         for i in range(0,9):
-            pygame.draw.rect(screen,utility.TRACK_COLORS.get(utility.numbertocolor(i)),[30+(60*i),15,30,40], border_radius=3)
+            pygame.draw.rect(screen,utility.TRACK_COLORS.get(utility.numbertocolor(i)),[30+(50*i),40,30,40], border_radius=3)
             if i == 4:
                 text = utility.font.render(f'{self.hand[i]}' , True , (255,255,255))
             else:
                 text = utility.font.render(f'{self.hand[i]}' , True , (0,0,0))
-            screen.blit(text, text.get_rect(center=(30+(60*i)+15, 15+20)))
+            screen.blit(text, text.get_rect(center=(30+(50*i)+15, 40+20)))
             i = 0 
+
+        text = utility.mediumFontBold.render('Your Route Cards:' , True , (0,0,0))
+        screen.blit(text, text.get_rect(midright=(screen.get_width() - 20, 170)))
         for r in self.routeCardList:
-            r.drawRouteCard(screen,1000,200+(100*i))
+            r.drawRouteCard(screen,1000,220+(60*i))
             i+=1
         
         traintext = utility.font.render(f"Trains: {self.cars}", True, (0,0,0))
@@ -600,7 +607,7 @@ class setplayer(player):
 
 
 
-            
+            #drawRouteCard
 
 
 

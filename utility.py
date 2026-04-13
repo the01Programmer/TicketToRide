@@ -8,7 +8,10 @@ import tutorial
 from collections import deque
 pygame.init()
 font = pygame.font.SysFont('Corbel',35)
+mediumFont = pygame.font.SysFont('Corbel',25)
+mediumFontBold = pygame.font.SysFont('Corbel',25, bold = True)
 smallfont = pygame.font.SysFont('Corbel',15)
+smallfontBold = pygame.font.SysFont('Corbel',15, bold = True)
 class MessageLog:
     def __init__(self, max_lines=6):
         self.max_lines = max_lines
@@ -231,18 +234,19 @@ class Choicemenu:
         self.options = options
         self.buttons = []
         for i in range(len(self.options)):
-            self.buttons.append(pygame.Rect(30+(120*i),500,100,40))
+            self.buttons.append(pygame.Rect(400+(120*i),650,100,40))
     def buttoncheck(self):
         for i in range(len(self.options)):
             if self.buttons[i].collidepoint(pygame.mouse.get_pos()):
                 self.Owner.awns = self.options[i]
 
     def draw(self,screen):
+        pygame.draw.rect(screen, (255,255,255), (250, 590, 800, 120), border_radius=20)
         for i in range(len(self.options)):
-            pygame.draw.rect(screen,(0,0,0),(30+(120*i),500,100,40),border_radius=3)
+            pygame.draw.rect(screen,(0,0,0),(400+(120*i),650,100,40),border_radius=3)
             text = font.render(f"{self.options[i]}" , True , (255,255,255))
-            screen.blit(text,(50+(120*i),500))
-            screen.blit(self.text,(50,450))
+            screen.blit(text,(440+(120*i),650))
+            screen.blit(self.text,(300,620))
 
 def choose_track_from_list(track_list, screen, city):
     background = screen.copy()
