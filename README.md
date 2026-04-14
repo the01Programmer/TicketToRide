@@ -157,6 +157,8 @@ change log 22 - emmanuel aprl 12
 
 3. Added background rectangle for choice box
 
+change log 23 - Ryder - Apirl 12
+1. added the main_menu.py file. this file functions as the main menu for the program and will open subproseses which run main.py or tutorial_main.py if they are selected.
 change log 23 - Martina - April 12
 1. edited the show_hints function so it creates a window to display all hints instead of in messagelog (utility.py)
 
