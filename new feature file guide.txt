@@ -1,5 +1,7 @@
 main:
-	Add if your feature has functions that need to be called every frame, insulated before the game or use the event tracker, but avoid defining functions and classes here to ensure clarity 
+	Add if your feature has functions that need to be called every frame, insulated before the game or use the event tracker, but avoid defining functions and classes here to ensure clarity. more main files can be made to hold alternat gamemodes/tutorials
+	tutorial_main holds the tutorial for all basic actions 
+	main_menu holds the titlescreen where the user can chose what tutorial they want to play and it will open a subproses for it. add an option for all other completed main files
 
 player_classes:
 	Add if your function manipulates the contents of map_classes or directly interacts with the player/CPU classes, like the deck.
