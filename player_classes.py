@@ -234,7 +234,7 @@ class player:
         self.routes = []
         self.ending =  False
         self.cars = 18 # real max should be 45
-        self.stations = 1 # real number of stations should be 3
+        self.stations = 3 # real number of stations should be 3
         deal = 4
         self.hand[pull.get()] += 1
         self.hand[pull.get()] += 1
