@@ -1,5 +1,7 @@
 import pygame
 import queue
+import utility
+import tutorial
 clock = pygame.time.Clock()
 
 def pointsQuiz(correctPoints):
@@ -19,6 +21,7 @@ def pointsQuiz(correctPoints):
     text_surface = font.render('How many points did you earn?', True, (255, 255, 255))
 
     isRunning = True
+    
     while isRunning:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -82,11 +85,6 @@ class setplay:
         self.sethand = [0,0,0,0,0,0,0,0,0]
         #
         self.empty = False
-        
-        
-        
-
-
 
     def getactionE(self):
         return self.currentE
@@ -96,5 +94,20 @@ class setplay:
             self.currentE = self.actions.get()
         else:
             self.empty = True
+
+    def describeaction(self, tracks = None):
+        if self.empty == False:
+            if self.currentE[0] == 'd':
+                return "draw a card from pile" + str(self.currentE[1][0] + 1) + " and " + str(self.currentE[1][1] + 1)
+            
+            if self.currentE[0] == 'b':
+                i = tracks[self.currentE[1]]
+                return "buy the route between " +  i.city1.name + " and " + i.city2.name
+            
+            if self.currentE[0] == 's':
+                return "place a station on: " + self.currentE[1]
+            
+            if self.currentE[0] == 'r':
+                return "draw route cards"
 
     

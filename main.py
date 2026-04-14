@@ -7,7 +7,6 @@ import player_classes
 import map_classes
 import utility
 import math
-#import player_classes
 from collections import deque
 # pygame setup
 pygame.init()
@@ -34,7 +33,8 @@ del cards.routeCards[0]
 game_over = False
 game_over_processed = False
 exit_button = pygame.Rect(500, 300, 280, 60)
-hint_button = pygame.Rect(1100, 20, 160, 40)
+hint_button = pygame.Rect(1100, 55, 160, 40)
+rules_button = pygame.Rect(1100, 5, 160, 40)
 
 while running:
     # poll for events
@@ -64,7 +64,7 @@ while running:
                             utility.message_log.add("")
 
                     if city is not None:
-                        success = utility.placestation(user, city, screen)
+                        success = utility.placestation(user, city)
                         if success:
                             utility.message_log.add("Station placed!")
                             utility.message_log.add("")
@@ -75,7 +75,10 @@ while running:
                             utility.message_log.add("")
                         
                     elif hint_button.collidepoint(mousepos):
-                        utility.show_hints(user, map)
+                        utility.show_hints(user, map, screen, clock)
+
+                    elif rules_button.collidepoint(mousepos):
+                        utility.show_rules(screen, clock)
 
                     else:
                         if cards.findpusedbuttons(user,screen):
@@ -108,7 +111,7 @@ while running:
                 # get all tracks touching that city, BUT only CPU-owned ones
                 options = [t for t in map.get_tracks_touching_city(station_city) if isinstance(t.Owner, player_classes.enemy)]
                 if options:
-                    chosen = utility.choose_track_from_list(options, screen)
+                    chosen = utility.choose_track_from_list(options, screen, station_city)
                     if chosen:
                         user.addConnection(chosen.city1, chosen.city2)
                         used_temp_track = chosen
@@ -133,11 +136,24 @@ while running:
                 user.score -= r.points
 
         user.score += 4 * user.stations
-        utility.message_log.add(f"Game over you got: {user.score} points and the cpu got {cpu.score} points")
+        
+        user_longest = utility.longest_route_length(user)
+        cpu_longest = utility.longest_route_length(cpu)
+
+        if user_longest > cpu_longest:
+            user.score += 10
+            utility.message_log.add("You got Longest Route (+10)")
+            utility.message_log.add("")
+        elif cpu_longest > user_longest:
+            cpu.score += 10
+            utility.message_log.add("CPU got Longest Route (+10)")
+            utility.message_log.add("")
+
+        utility.message_log.add(f"Game over! You got: {user.score} points and the CPU got {cpu.score} points.")
         if user.score > cpu.score:
-            utility.message_log.add(f"you won")
+            utility.message_log.add(f"You won!")
         else:
-            utility.message_log.add(f"the cpu won")
+            utility.message_log.add(f"The CPU won")
         game_over = True
         game_over_processed = True
 
@@ -146,8 +162,13 @@ while running:
 
     pygame.draw.rect(screen, (90, 180, 90), hint_button, border_radius=8)
     pygame.draw.rect(screen, (0, 0, 0), hint_button, 2, border_radius=8)
-    hint_text = font.render("Hint", True, (0, 0, 0))
+    hint_text = font.render("Hints", True, (0, 0, 0))
     screen.blit(hint_text, hint_text.get_rect(center=hint_button.center))
+
+    pygame.draw.rect(screen, (90, 90, 180), rules_button, border_radius=8)
+    pygame.draw.rect(screen, (0, 0, 0), rules_button, 2, border_radius=8)
+    rules_text = font.render("Rules", True, (0, 0, 0))
+    screen.blit(rules_text, rules_text.get_rect(center=rules_button.center))
 
     utility.message_log.draw(screen)
         

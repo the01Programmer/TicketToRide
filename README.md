@@ -142,3 +142,32 @@ tutorial_main holds a copy of main that uses the set play classes. it it set up 
 small_map_classes hold the smaller map so that tutorial_main can use a smaller map since that would make it easyyer
 
 it would likely be a good idea to add messages to this main file in the future
+
+change log 21 - ryder aprl 9
+1. added a describemove function to the setplay class which outputs a string that tells the user the move they need to do 
+
+2. updated every function that can take a setplay object to check if the player can make the move they represent to call describemove after updating the set turn.
+
+3. added a line to setplayer's creation function to call describemove.
+
+change log 22 - emmanuel aprl 12
+1. Implemented Highlights on the expanded map & adjusting the font for better readability
+
+2. Added Supporting texts and adjusted positions and fonts for better clarity and readability
+
+3. Added background rectangle for choice box
+
+change log 23 - Martina - April 12
+1. edited the show_hints function so it creates a window to display all hints instead of in messagelog (utility.py)
+
+2. added 2 helper functions get_hint_lines and wrap_text for show_hints function (utility.py)
+
+3. added a function longest_route_length to check the longest continous path that the user being passed to the function has
+
+4. added a section when the game ends to check who had the longest route (calls longest_route_length) and based on that, adds 10 points to either the cpu or player's score (main.py)
+
+5. added function show_rules to display rules of Ticket to Ride game in a seperate window (utility.py)
+
+6. added a "Rules" button that if pressed by the users, calls the show_rules function (main.py)
+
+7. fixed bug that was not allowing a station to be placed by the player (main.py)
