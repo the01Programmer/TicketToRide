@@ -16,10 +16,10 @@ font = pygame.font.SysFont('Corbel',35)
 smallfont = pygame.font.SysFont('Corbel',15)
 
 title  = titlefont.render('Ticket to Ride tutorial' , True , (0,0,0))
-textsetplay = smallfont.render("play a tutorial that walks you through all basic actions" , True , (0,0,0))
-textnormalplay = smallfont.render("play a tutorial against a cpu on a the map from eroup ed" , True , (0,0,0))
-setplaytitle = smallfont.render("intro game" , True , (255,255,255))
-normalplaytitle = smallfont.render("test game" , True , (255,255,255))
+textsetplay = smallfont.render("Play a tutorial that walks you through all basic actions" , True , (0,0,0))
+textnormalplay = smallfont.render("Play a tutorial against a CPU on a map from the Europe Edition" , True , (0,0,0))
+setplaytitle = smallfont.render("Intro Game" , True , (255,255,255))
+normalplaytitle = smallfont.render("Test Game" , True , (255,255,255))
 
 while running:
     

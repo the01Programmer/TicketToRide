@@ -171,3 +171,6 @@ change log 23 - Martina - April 12
 6. added a "Rules" button that if pressed by the users, calls the show_rules function (main.py)
 
 7. fixed bug that was not allowing a station to be placed by the player (main.py)
+
+change log 24 - Martine - April 13
+1. Added test.py file
